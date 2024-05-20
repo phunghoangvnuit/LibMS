@@ -5,7 +5,7 @@
 
 int main()
 {
-    std::cout << "Library Management System\n";
+    std::cout << "Library Management System _ DEMO\n";
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
