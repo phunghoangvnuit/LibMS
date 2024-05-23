@@ -1,10 +1,137 @@
 #include <iostream>
 #include <cstdlib>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <sstream>
+
 using namespace std;
 
 void callMainMenuUI();
 
-void callBookManagmentUI() {
+class Book {
+    private:
+        // Primary Key:
+        int id;
+        string title;
+        string isbn;
+        string category;
+        int quantity;
+        // Foreign Key:
+        int authorId;
+
+    public:
+        //getter & setter (id)
+        int getId() {
+            return this->id;
+        }
+        void setId(int id) {
+            this->id = id;
+        }
+        //getter & setter (title)
+        string getTitle() {
+            return this->title;
+        }
+        void setTitle(string title) {
+            this->title = title;
+        }
+        //getter & setter (isbn)
+        string getIsbn() {
+            return this->isbn;
+        }
+        void setIsbn(string isbn) {
+            this->isbn = isbn;
+        }
+        //getter & setter (category)
+        string getCategory() {
+            return this->category;
+        }
+        void setCategory(string category) {
+            this->category = category;
+        }
+        //getter & setter (quantity)
+        int getQuantity() {
+            return this->quantity;
+        }
+        void setQuantity(int quantity) {
+            this->quantity = quantity;
+        }
+        //getter & setter (authorId)
+        int getAuthorId() {
+            return this->authorId;
+        }
+        void setAuthorId(int authorId) {
+            this->authorId = authorId;
+        }
+
+        //Book Constructor
+        Book(){}
+
+        Book(int id, string title, string isbn, string category, int quantity, int authorId) {
+            this->id = id;
+            this->title = title;
+            this->isbn = isbn;
+            this->category = category;
+            this->quantity = quantity;
+            this->authorId = authorId;
+        }
+
+        /*CRUD_Book in CSV*/
+        void insertBookIntoCSV()
+        {
+            fstream bookCSV;
+            bookCSV.open("book.csv", ios::app);
+
+            if (bookCSV.is_open()) {
+                bookCSV << this->id       << ',';
+                bookCSV << this->title    << ',';
+                bookCSV << this->isbn     << ',';
+                bookCSV << this->category << ',';
+                bookCSV << this->quantity << ',';
+                bookCSV << this->authorId << endl;
+                bookCSV.close();
+            }
+        }
+
+        void getBookFromCSV(int id) {
+            fstream bookCSV;
+            bookCSV.open("book.csv", ios::in);
+
+            if (bookCSV.is_open()) {
+                string line;
+                while (getline(bookCSV, line)) {
+                    vector<string> vect;
+                    stringstream ss(line);
+
+                    while (ss.good()) {
+                        string word;
+                        getline(ss, word, ',');
+                        vect.push_back(word);
+                    }
+
+                    if (stoi(vect[0]) == id) {
+                        for (int i = 0; i < 5; i++) {
+                            cout << vect[i] << "\n";
+                        }
+                        return;
+                    }
+                }
+                cout << "Can't not found book's id: " << id;
+                bookCSV.close();
+            }
+        }
+
+        void updateBookinCsv() {
+
+        }
+
+        void deleteBookinCsv() {
+
+        }
+};
+
+
+void callBookManagementUI() {
     system("cls");
     int option;
     cout << "-----------------------------\n";
@@ -19,12 +146,12 @@ void callBookManagmentUI() {
     cout << "-----------------------------\n";
     cout << "Please choose an option: "; cin >> option;
     switch (option) {
-        case 1: cout << "callBookManagementUI\n"; break;
-        case 2: cout << "callPatronManagementUI\n"; break;
-        case 3: cout << "callLoanManagementUI\n"; break;
-        case 4: cout << "callAuthorManagementUI\n"; break;
-        case 5: callMainMenuUI(); break;
-        default: cout << "Invalid input! Press 'Enter' to try again!";
+    case 1: cout << "callBookManagementUI\n"; break;
+    case 2: cout << "callPatronManagementUI\n"; break;
+    case 3: cout << "callLoanManagementUI\n"; break;
+    case 4: cout << "callAuthorManagementUI\n"; break;
+    case 5: callMainMenuUI(); break;
+    default: cout << "Invalid input! Press 'Enter' to try again!";
     }
 }
 
@@ -114,7 +241,7 @@ void callMainMenuUI() {
     cout << "-----------------------------\n";
     cout << "Please choose an option: "; cin >> option;
     switch (option) {
-    case 1: callBookManagmentUI(); break;
+    case 1: callBookManagementUI(); break;
     case 2: callPatronManagmentUI(); break;
     case 3: callPatronManagmentUI(); break;
     case 4: callAuthorManagmentUI(); break;
@@ -125,7 +252,8 @@ void callMainMenuUI() {
 
 int main()
 {
-    callMainMenuUI();
+    Book book;
+    book.getBookFromCSV(3);
     return 0;
 }
 
