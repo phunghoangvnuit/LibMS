@@ -4,10 +4,16 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <cctype>
 
 using namespace std;
 
-void callMainMenuUI();
+string username = "phunghoangvnuit";
+string password = "hello_world_123";
+
+void loginUI();
+void mainMenuUI();
+void bookManagementUI();
 
 class Book {
     private:
@@ -65,7 +71,7 @@ class Book {
         }
 
         //Book Constructor
-        Book(){}
+        Book(){};
 
         Book(int id, string title, string isbn, string category, int quantity, int authorId) {
             this->id = id;
@@ -74,6 +80,34 @@ class Book {
             this->category = category;
             this->quantity = quantity;
             this->authorId = authorId;
+        }
+
+        /*C.R.U.D - Book.CSV*/
+
+        // Check book id if exsited
+        bool checkBookIdIfExsited(int id) {
+            fstream bookCSV;
+            bookCSV.open("book.csv", ios::in);
+
+            if (bookCSV.is_open()) {
+                string line;
+                while (getline(bookCSV, line)) {
+                    vector<string> vectVal;
+                    stringstream ss(line);
+
+                    while (ss.good()) {
+                        string word;
+                        getline(ss, word, ',');
+                        vectVal.push_back(word);
+                    }
+
+                    if (stoi(vectVal[0]) == id) {
+                        return true;
+                    }
+                }
+                bookCSV.close();
+                return false;
+            }
         }
 
         // Insert Book
@@ -91,7 +125,9 @@ class Book {
                 bookCSV << this->authorId << endl;
                 bookCSV.close();
             }
-            cout << "!Notice: Book Created";
+            cout << "Notice: Book Created \n";
+            system("pause");
+            bookManagementUI();
         }
 
         // Get Book by Id
@@ -112,14 +148,19 @@ class Book {
                     }
 
                     if (stoi(vectVal[0]) == id) {
-                        for (int i = 0; i < 5; i++) {
-                            cout << vectVal[i] << "\n";
-                        }
+                        cout << "----------------------------------\n";
+                        cout << "| BookId   :  " << vectVal[0] << " (Current Version)\n";
+                        cout << "| Title    :  " << vectVal[1] << "\n";
+                        cout << "| ISBN     :  " << vectVal[2] << "\n";
+                        cout << "| Category :  " << vectVal[3] << "\n";
+                        cout << "| Quantity :  " << vectVal[4] << "\n";
+                        cout << "| AuthorId :  " << vectVal[5] << "\n";
+                        cout << "----------------------------------\n";
                         return;
                     }
                 }
-                cout << "Can't not found book's id: " << id;
                 bookCSV.close();
+                cout << "Can't not found book's id: " << id;
             }
         }
 
@@ -127,6 +168,7 @@ class Book {
         void updateBookInCsv(int id, Book book) {
             fstream bookCSV;
             bookCSV.open("book.csv", ios::in);
+            bool not_found = true;
 
             if (bookCSV.is_open()) {
                 vector<string> vectObj;
@@ -156,12 +198,18 @@ class Book {
                             + vectVal[4] + ','
                             + vectVal[5];
                         vectObj.push_back(altLine);
+                        not_found = false;
                     }
                     else {
                         vectObj.push_back(line);
                     }
                 }
                 bookCSV.close();
+
+                if (not_found == true) {
+                    cout << "Can't not found book's id: " << id;
+                    return;
+                }
 
                 fstream bookCSV;
                 bookCSV.open("book.csv", ios::out);
@@ -173,12 +221,16 @@ class Book {
                 }
                 bookCSV.close();
             }
+            cout << "Notice: Book ID " << id << " Updated \n";
+            system("pause");
+            bookManagementUI();
         }
 
         // Delete Book by Id
         void deleteBookInCsv(int id) {
             fstream bookCSV;
             bookCSV.open("book.csv", ios::in);
+            bool not_found = true;
 
             if (bookCSV.is_open()) {
                 vector<string> vectObj;
@@ -195,9 +247,16 @@ class Book {
 
                     if (stoi(vectVal[0]) != id) {
                         vectObj.push_back(line);
+                    } else {
+                        not_found = false;
                     }
                 }
                 bookCSV.close();
+
+                if (not_found == true) {
+                    cout << "Can't not found book's id: " << id;
+                    return;
+                }
 
                 fstream bookCSV;
                 bookCSV.open("book.csv", ios::out);
@@ -208,35 +267,170 @@ class Book {
                 }
                 bookCSV.close();
             }
+            cout << "Notice: Book ID " << id << " Deleted \n";
+            system("pause");
         }
 };
 
+void createBookUI() {
+    int id;
+    char option = ' ';
+    string title;
+    string isbn;
+    string category;
+    int quantity;
+    int authorId;
+    Book book;
 
-void callBookManagementUI() {
+    system("cls");
+    cout << "----------------------------------\n";
+    cout << "|        CREATE BOOK FORM        |\n";
+    cout << "----------------------------------\n";
+    cout << "| BookId   :  "; cin >> id;
+    if (book.checkBookIdIfExsited(id)) {
+    cout << "----------------------------------\n";
+    book.getBookFromCSV(id);
+    cout << "Notice: BookId is already exsited \n";
+    system("pause");
+    bookManagementUI();
+    return;
+    };
+    cout << "| Title    :  "; getline(cin >> ws,title);
+    cout << "| ISBN     :  "; getline(cin >> ws,isbn);
+    cout << "| Category :  "; getline(cin >> ws,category);
+    cout << "| Quantity :  "; cin >> quantity;
+    cout << "| AuthorId :  "; cin >> authorId;
+    cout << "----------------------------------\n";
+    cout << "----------------------------------\n";
+    cout << "| YOU WANT TO CREATE THIS BOOK?  |\n";
+    cout << "----------------------------------\n";
+    cout << "|      YES      |     Cancel     |\n";
+    cout << "----------------------------------\n";
+    while (option != 'Y' && option != 'N') {
+        cout << "Enter (Y/N): "; cin >> option;
+        if (toupper(option) == 'Y') {
+            Book newBook(id, title, isbn, category, quantity, authorId);
+            newBook.insertBookIntoCSV();
+            createBookUI();
+        }
+        else if (toupper(option) == 'N') {
+            bookManagementUI();
+        }
+    }
+}
+
+void updateBookUI() {
+    int id;
+    char option = ' ';
+    string title;
+    string isbn;
+    string category;
+    int quantity;
+    int authorId;
+    Book book;
+
+    system("cls");
+    cout << "----------------------------------\n";
+    cout << "|        UPDATE BOOK FORM        |\n";
+    cout << "----------------------------------\n";
+    cout << "| BookId   :  "; cin >> id;
+    cout << "----------------------------------\n";
+    if (!book.checkBookIdIfExsited(id)) {
+    cout << "Notice: BookId is not exsited \n";
+    system("pause");
+    bookManagementUI();
+    return;
+    };
+    book.getBookFromCSV(id);
+    cout << "----------------------------------\n";
+    cout << "| BookId   :  " << id << " (Update Version)\n";
+    cout << "| Title    :  "; getline(cin >> ws, title);
+    cout << "| ISBN     :  "; getline(cin >> ws, isbn);
+    cout << "| Category :  "; getline(cin >> ws, category);
+    cout << "| Quantity :  "; cin >> quantity;
+    cout << "| AuthorId :  "; cin >> authorId;
+    cout << "----------------------------------\n";
+    cout << "----------------------------------\n";
+    cout << "| YOU WANT TO UPDATE THIS BOOK?  |\n";
+    cout << "----------------------------------\n";
+    cout << "|      YES      |     Cancel     |\n";
+    cout << "----------------------------------\n";
+    while (option != 'Y' && option != 'N') {
+        cout << "Enter (Y/N): "; cin >> option;
+        if (toupper(option) == 'Y') {
+            Book altBook(id, title, isbn, category, quantity, authorId);
+            altBook.updateBookInCsv(id, altBook);
+            updateBookUI();
+        }
+        else if (toupper(option) == 'N') {
+            bookManagementUI();
+        }
+    }
+}
+
+void deleteBookUI() {
+    int id;
+    char option = ' ';
+    Book book;
+    system("cls");
+    cout << "----------------------------------\n";
+    cout << "|        DELETE BOOK FORM        |\n";
+    cout << "----------------------------------\n";
+    cout << "| BookId   :  "; cin >> id;
+    cout << "----------------------------------\n";
+    if (!book.checkBookIdIfExsited(id)) {
+        cout << "Notice: BookId is not exsited \n";
+        system("pause");
+        bookManagementUI();
+        return;
+    };
+    book.getBookFromCSV(id);
+    cout << "----------------------------------\n";
+    cout << "| YOU WANT TO DELETE THIS BOOK?  |\n";
+    cout << "----------------------------------\n";
+    cout << "|      YES      |     Cancel     |\n";
+    cout << "----------------------------------\n";
+    while (option != 'Y' && option != 'N') {
+        cout << "Enter (Y/N): "; cin >> option;
+        if (toupper(option) == 'Y') {
+            book.deleteBookInCsv(id);
+            deleteBookUI();
+        } else if (toupper(option) == 'N') {
+            bookManagementUI();
+        }
+    }
+}
+
+void bookManagementUI() {
     system("cls");
     int option;
-    cout << "-----------------------------\n";
-    cout << "|    Book Management Menu   |\n";
-    cout << "-----------------------------\n";
-    cout << "| 1> Get all books          |\n";
-    cout << "| 2> Get book by ID         |\n";
-    cout << "| 3> Create book            |\n";
-    cout << "| 4> Modify book by ID      |\n";
-    cout << "| 5> Delete book by ID      |\n";
-    cout << "| 6> Back to Main Menu      |\n";
-    cout << "-----------------------------\n";
+    cout << "----------------------------------\n";
+    cout << "|       BOOK MANAGEMENT MENU     |\n";
+    cout << "----------------------------------\n";
+    cout << "| 1> Get all books               |\n";
+    cout << "| 2> Get book by ID              |\n";
+    cout << "| 3> Get book by Category        |\n";
+    cout << "| 4> Get book by Author          |\n";
+    cout << "| 5> Create book                 |\n";
+    cout << "| 6> Modify book by ID           |\n";
+    cout << "| 7> Delete book by ID           |\n";
+    cout << "| 8> Back to Main Menu           |\n";
+    cout << "----------------------------------\n";
     cout << "Please choose an option: "; cin >> option;
     switch (option) {
-    case 1: cout << "callBookManagementUI\n"; break;
-    case 2: cout << "callPatronManagementUI\n"; break;
-    case 3: cout << "callLoanManagementUI\n"; break;
-    case 4: cout << "callAuthorManagementUI\n"; break;
-    case 5: callMainMenuUI(); break;
+    case 1: cout << "c1\n"; break;
+    case 2: cout << "c2\n"; break;
+    case 3: cout << "c3\n"; break;
+    case 4: cout << "c4\n"; break;
+    case 5: createBookUI(); break;
+    case 6: updateBookUI(); break;
+    case 7: deleteBookUI(); break;
+    case 8: system("cls"); mainMenuUI(); break;
     default: cout << "Invalid input! Press 'Enter' to try again!";
     }
 }
 
-void callPatronManagmentUI() {
+void patronManagmentUI() {
     system("cls");
     int option;
     cout << "-----------------------------\n";
@@ -255,12 +449,12 @@ void callPatronManagmentUI() {
     case 2: cout << "callPatronManagementUI\n"; break;
     case 3: cout << "callLoanManagementUI\n"; break;
     case 4: cout << "callAuthorManagementUI\n"; break;
-    case 5: callMainMenuUI(); break;
+    case 5: mainMenuUI(); break;
     default: cout << "Invalid input! Press 'Enter' to try again!";
     }
 }
 
-void callLoanManagmentUI() {
+void loanManagmentUI() {
     system("cls");
     int option;
     cout << "-----------------------------\n";
@@ -279,12 +473,12 @@ void callLoanManagmentUI() {
     case 2: cout << "callPatronManagementUI\n"; break;
     case 3: cout << "callLoanManagementUI\n"; break;
     case 4: cout << "callAuthorManagementUI\n"; break;
-    case 5: callMainMenuUI(); break;
+    case 5: mainMenuUI(); break;
     default: cout << "Invalid input! Press 'Enter' to try again!";
     }
 }
 
-void callAuthorManagmentUI() {
+void categoryManagmentUI() {
     system("cls");
     int option;
     cout << "-----------------------------\n";
@@ -303,38 +497,107 @@ void callAuthorManagmentUI() {
     case 2: cout << "callPatronManagementUI\n"; break;
     case 3: cout << "callLoanManagementUI\n"; break;
     case 4: cout << "callAuthorManagementUI\n"; break;
-    case 5: callMainMenuUI(); break;
+    case 5: mainMenuUI(); break;
     default: cout << "Invalid input! Press 'Enter' to try again!";
     }
 }
 
-void callMainMenuUI() {
+void authorManagmentUI() {
     system("cls");
     int option;
     cout << "-----------------------------\n";
-    cout << "| Library Management System |\n";
+    cout << "|   Author Management Menu  |\n";
     cout << "-----------------------------\n";
-    cout << "| 1> Book Management        |\n";
-    cout << "| 2> Patron Management      |\n";
-    cout << "| 3> Loan Management        |\n";
-    cout << "| 4> Author Management      |\n";
-    cout << "| 5> Logout                 |\n";
+    cout << "| 1> Get all authors        |\n";
+    cout << "| 2> Get author by ID       |\n";
+    cout << "| 3> Create author          |\n";
+    cout << "| 4> Modify author by ID    |\n";
+    cout << "| 5> Delete author by ID    |\n";
+    cout << "| 6> Back to Main Menu      |\n";
     cout << "-----------------------------\n";
     cout << "Please choose an option: "; cin >> option;
     switch (option) {
-    case 1: callBookManagementUI(); break;
-    case 2: callPatronManagmentUI(); break;
-    case 3: callPatronManagmentUI(); break;
-    case 4: callAuthorManagmentUI(); break;
-    case 5: cout << "callLogoutUI\n"; break;
+    case 1: cout << "callBookManagementUI\n"; break;
+    case 2: cout << "callPatronManagementUI\n"; break;
+    case 3: cout << "callLoanManagementUI\n"; break;
+    case 4: cout << "callAuthorManagementUI\n"; break;
+    case 5: mainMenuUI(); break;
     default: cout << "Invalid input! Press 'Enter' to try again!";
+    }
+}
+
+void logoutUI() {
+    char option = ' ';
+
+    system("cls");
+    cout << "----------------------------------\n";
+    cout << "| YOU WANT TO DELETE THIS BOOK?  |\n";
+    cout << "----------------------------------\n";
+    cout << "|      YES      |     Cancel     |\n";
+    cout << "----------------------------------\n";
+    while (option != 'Y' && option != 'N') {
+        cout << "Enter (Y/N): "; cin >> option;
+        if (toupper(option) == 'Y') {
+            loginUI();
+        }
+        else if (toupper(option) == 'N') {
+            mainMenuUI();
+        }
+    }
+}
+
+void loginUI() {
+    int option;
+    string usernameInput;
+    string passwordInput;
+
+    system("cls");
+    cout << "----------------------------------\n";
+    cout << "|           LOGIN FORM           |\n";
+    cout << "----------------------------------\n";
+    cout << "| Username: "; getline(cin >> ws, usernameInput);
+    cout << "| Password: "; getline(cin >> ws, passwordInput);
+    cout << "----------------------------------\n";
+    if (usernameInput == username 
+    &&  passwordInput == password) 
+    {
+        mainMenuUI();
+    } else {
+        system("cls");
+        loginUI();
+    }
+}
+
+void mainMenuUI() {
+    system("cls");
+    int option;
+    cout << "----------------------------------\n";
+    cout << "|    LIBRARY MANAGEMENT SYSTEM   |\n";
+    cout << "----------------------------------\n";
+    cout << "| 1> Book Management             |\n";
+    cout << "| 2> Category Management         |\n";
+    cout << "| 3> Author Management           |\n";
+    cout << "| 4> Patron Management           |\n";
+    cout << "| 5> Loan Management             |\n";
+    cout << "| 6> Logout                      |\n";
+    cout << "----------------------------------\n";
+    cout << "Please choose an option: "; cin >> option;
+    switch (option) {
+    case 1: bookManagementUI(); break;
+    case 2: categoryManagmentUI(); break;
+    case 3: authorManagmentUI(); break;
+    case 4: patronManagmentUI(); break;
+    case 5: loanManagmentUI(); break;
+    case 6: logoutUI(); break;
+    default: system("cls"); mainMenuUI();
     }
 }
 
 int main()
 {
-    Book book;
-    book.getBookFromCSV(3);
+    //username = "phunghoangvnuit";
+    //password = "hello_world_123";
+    loginUI();
     return 0;
 }
 

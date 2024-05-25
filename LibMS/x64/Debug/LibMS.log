@@ -1,2 +1,4 @@
 ﻿  LibMS.cpp
+C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(550,9): warning C4101: 'option': unreferenced local variable
+C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(111,1): warning C4715: 'Book::checkBookIdIfExsited': not all control paths return a value
   LibMS.vcxproj -> C:\Users\phung\Desktop\Cpp\LibMS\x64\Debug\LibMS.exe
