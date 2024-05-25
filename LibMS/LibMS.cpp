@@ -76,7 +76,7 @@ class Book {
             this->authorId = authorId;
         }
 
-        /*CRUD_Book in CSV*/
+        // Insert Book
         void insertBookIntoCSV()
         {
             fstream bookCSV;
@@ -91,8 +91,10 @@ class Book {
                 bookCSV << this->authorId << endl;
                 bookCSV.close();
             }
+            cout << "!Notice: Book Created";
         }
 
+        // Get Book by Id
         void getBookFromCSV(int id) {
             fstream bookCSV;
             bookCSV.open("book.csv", ios::in);
@@ -100,18 +102,18 @@ class Book {
             if (bookCSV.is_open()) {
                 string line;
                 while (getline(bookCSV, line)) {
-                    vector<string> vect;
+                    vector<string> vectVal;
                     stringstream ss(line);
 
                     while (ss.good()) {
                         string word;
                         getline(ss, word, ',');
-                        vect.push_back(word);
+                        vectVal.push_back(word);
                     }
 
-                    if (stoi(vect[0]) == id) {
+                    if (stoi(vectVal[0]) == id) {
                         for (int i = 0; i < 5; i++) {
-                            cout << vect[i] << "\n";
+                            cout << vectVal[i] << "\n";
                         }
                         return;
                     }
@@ -121,12 +123,91 @@ class Book {
             }
         }
 
-        void updateBookinCsv() {
+        // Update Book by Id
+        void updateBookInCsv(int id, Book book) {
+            fstream bookCSV;
+            bookCSV.open("book.csv", ios::in);
 
+            if (bookCSV.is_open()) {
+                vector<string> vectObj;
+                string line;
+                while (getline(bookCSV, line)) {
+                    vector<string> vectVal;
+                    stringstream ss(line);
+
+                    while (ss.good()) {
+                        string word;
+                        getline(ss, word, ',');
+                        vectVal.push_back(word);
+                    }
+
+                    if (stoi(vectVal[0]) == id) {
+                        vectVal[0] = to_string(book.getId());
+                        vectVal[1] = book.getTitle();
+                        vectVal[2] = book.getIsbn();
+                        vectVal[3] = book.getCategory();
+                        vectVal[4] = to_string(book.getQuantity());
+                        vectVal[5] = to_string(book.getAuthorId());
+                        string altLine;
+                        altLine = vectVal[0] + ','
+                            + vectVal[1] + ','
+                            + vectVal[2] + ','
+                            + vectVal[3] + ','
+                            + vectVal[4] + ','
+                            + vectVal[5];
+                        vectObj.push_back(altLine);
+                    }
+                    else {
+                        vectObj.push_back(line);
+                    }
+                }
+                bookCSV.close();
+
+                fstream bookCSV;
+                bookCSV.open("book.csv", ios::out);
+                for (int i = 0; i < vectObj.size(); i++) {
+
+                    if (bookCSV.is_open()) {
+                        bookCSV << vectObj[i] << "\n";
+                    }
+                }
+                bookCSV.close();
+            }
         }
 
-        void deleteBookinCsv() {
+        // Delete Book by Id
+        void deleteBookInCsv(int id) {
+            fstream bookCSV;
+            bookCSV.open("book.csv", ios::in);
 
+            if (bookCSV.is_open()) {
+                vector<string> vectObj;
+                string line;
+                while (getline(bookCSV, line)) {
+                    vector<string> vectVal;
+                    stringstream ss(line);
+
+                    while (ss.good()) {
+                        string word;
+                        getline(ss, word, ',');
+                        vectVal.push_back(word);
+                    }
+
+                    if (stoi(vectVal[0]) != id) {
+                        vectObj.push_back(line);
+                    }
+                }
+                bookCSV.close();
+
+                fstream bookCSV;
+                bookCSV.open("book.csv", ios::out);
+                for (int i = 0; i < vectObj.size(); i++) {
+                    if (bookCSV.is_open()) {
+                        bookCSV << vectObj[i] << "\n";
+                    }
+                }
+                bookCSV.close();
+            }
         }
 };
 
