@@ -1,20 +1,20 @@
 #include <iostream>
-#include <cstdlib>
 #include <string>
 #include <fstream>
 #include <vector>
 #include <sstream>
-#include <cctype>
 
 using namespace std;
 
 string username = "phunghoangvnuit";
 string password = "hello_world_123";
 
-void loginUI();
-void mainMenuUI();
 void bookManagementUI();
+void mainMenuUI();
+void loginUI();
+void logoutUI();
 
+/*Book*/
 class Book {
     private:
         // Primary Key:
@@ -83,7 +83,6 @@ class Book {
         }
 
         /*C.R.U.D - Book.CSV*/
-
         // Check book id if exsited
         bool checkBookIdIfExsited(int id) {
             fstream bookCSV;
@@ -131,6 +130,34 @@ class Book {
         }
 
         // Get Book by Id
+        void getBookFromCSV() {
+            fstream bookCSV;
+            bookCSV.open("book.csv", ios::in);
+
+            if (bookCSV.is_open()) {
+                string line;
+                if (!getline(bookCSV, line)) { cout << "Notice: Empty Library!!!\n"; return; };
+                while (getline(bookCSV, line)) {
+                    vector<string> vectVal;
+                    stringstream ss(line);
+
+                    while (ss.good()) {
+                        string word;
+                        getline(ss, word, ',');
+                        vectVal.push_back(word);
+                    }
+                    cout << "----------------------------------\n";
+                    cout << "| BookId   :  " << vectVal[0] << " (Current Version)\n";
+                    cout << "| Title    :  " << vectVal[1] << "\n";
+                    cout << "| ISBN     :  " << vectVal[2] << "\n";
+                    cout << "| Category :  " << vectVal[3] << "\n";
+                    cout << "| Quantity :  " << vectVal[4] << "\n";
+                    cout << "| AuthorId :  " << vectVal[5] << "\n";
+                    cout << "----------------------------------\n";
+                }
+                bookCSV.close();
+            }
+        }
         void getBookFromCSV(int id) {
             fstream bookCSV;
             bookCSV.open("book.csv", ios::in);
@@ -163,7 +190,7 @@ class Book {
                 cout << "Can't not found book's id: " << id;
             }
         }
-
+        
         // Update Book by Id
         void updateBookInCsv(int id, Book book) {
             fstream bookCSV;
@@ -271,7 +298,6 @@ class Book {
             system("pause");
         }
 };
-
 void createBookUI() {
     int id;
     char option = ' ';
@@ -318,7 +344,39 @@ void createBookUI() {
         }
     }
 }
+void getAllBookUI() {
+    Book book;
 
+    system("cls");
+    cout << "----------------------------------\n";
+    cout << "|       BOOK MANAGEMENT MENU     |\n";
+    cout << "----------------------------------\n";
+    book.getBookFromCSV();
+    system("pause");
+    bookManagementUI();
+    return;
+};
+void getBookByIdUI() {
+    int id;
+    Book book;
+
+    system("cls");
+    cout << "----------------------------------\n";
+    cout << "|       BOOK MANAGEMENT MENU     |\n";
+    cout << "----------------------------------\n";
+    cout << "| BookId   :  "; cin >> id;
+    cout << "----------------------------------\n";
+    if (!book.checkBookIdIfExsited(id)) {
+        cout << "Notice: BookId is not exsited \n";
+        system("pause");
+        bookManagementUI();
+        return;
+    };
+    book.getBookFromCSV(id);
+    system("pause");
+    bookManagementUI();
+    return;
+};
 void updateBookUI() {
     int id;
     char option = ' ';
@@ -367,7 +425,6 @@ void updateBookUI() {
         }
     }
 }
-
 void deleteBookUI() {
     int id;
     char option = ' ';
@@ -400,7 +457,6 @@ void deleteBookUI() {
         }
     }
 }
-
 void bookManagementUI() {
     system("cls");
     int option;
@@ -418,114 +474,42 @@ void bookManagementUI() {
     cout << "----------------------------------\n";
     cout << "Please choose an option: "; cin >> option;
     switch (option) {
-    case 1: cout << "c1\n"; break;
-    case 2: cout << "c2\n"; break;
-    case 3: cout << "c3\n"; break;
-    case 4: cout << "c4\n"; break;
-    case 5: createBookUI(); break;
-    case 6: updateBookUI(); break;
-    case 7: deleteBookUI(); break;
+    case 1: getAllBookUI() ; break;
+    case 2: getBookByIdUI(); break;
+    case 3: cout << "c3\n" ; break;
+    case 4: cout << "c4\n" ; break;
+    case 5: createBookUI() ; break;
+    case 6: updateBookUI() ; break;
+    case 7: deleteBookUI() ; break;
     case 8: system("cls"); mainMenuUI(); break;
     default: cout << "Invalid input! Press 'Enter' to try again!";
     }
 }
 
-void patronManagmentUI() {
+void mainMenuUI() {
     system("cls");
     int option;
-    cout << "-----------------------------\n";
-    cout << "|   Patron Management Menu  |\n";
-    cout << "-----------------------------\n";
-    cout << "| 1> Get all patrons        |\n";
-    cout << "| 2> Get patron by ID       |\n";
-    cout << "| 2> Create patron          |\n";
-    cout << "| 3> Modify patron by ID    |\n";
-    cout << "| 4> Delete patron by ID    |\n";
-    cout << "| 5> Back to Main Menu      |\n";
-    cout << "-----------------------------\n";
+    cout << "----------------------------------\n";
+    cout << "|    LIBRARY MANAGEMENT SYSTEM   |\n";
+    cout << "----------------------------------\n";
+    cout << "| 1> Book Management             |\n";
+    cout << "| 2> Category Management         |\n";
+    cout << "| 3> Author Management           |\n";
+    cout << "| 4> Patron Management           |\n";
+    cout << "| 5> Loan Management             |\n";
+    cout << "| 6> Logout                      |\n";
+    cout << "----------------------------------\n";
     cout << "Please choose an option: "; cin >> option;
     switch (option) {
-    case 1: cout << "callBookManagementUI\n"; break;
-    case 2: cout << "callPatronManagementUI\n"; break;
-    case 3: cout << "callLoanManagementUI\n"; break;
-    case 4: cout << "callAuthorManagementUI\n"; break;
-    case 5: mainMenuUI(); break;
-    default: cout << "Invalid input! Press 'Enter' to try again!";
+    case 1: bookManagementUI(); break;
+    case 2: cout << "categoryManagmentUI()"; break;
+    case 3: cout << "authorManagmentUI()"; break;
+    case 4: cout << "patronManagmentUI()"; break;
+    case 5: cout << "loanManagmentUI()"; break;
+    case 6: logoutUI(); break;
+    default: system("cls"); mainMenuUI();
     }
 }
-
-void loanManagmentUI() {
-    system("cls");
-    int option;
-    cout << "-----------------------------\n";
-    cout << "|    Loan Management Menu   |\n";
-    cout << "-----------------------------\n";
-    cout << "| 1> Get all loans          |\n";
-    cout << "| 2> Get loan by ID         |\n";
-    cout << "| 3> Create loan            |\n";
-    cout << "| 4> Modify loan by ID      |\n";
-    cout << "| 5> Delete loan by ID      |\n";
-    cout << "| 6> Back to Main Menu      |\n";
-    cout << "-----------------------------\n";
-    cout << "Please choose an option: "; cin >> option;
-    switch (option) {
-    case 1: cout << "callBookManagementUI\n"; break;
-    case 2: cout << "callPatronManagementUI\n"; break;
-    case 3: cout << "callLoanManagementUI\n"; break;
-    case 4: cout << "callAuthorManagementUI\n"; break;
-    case 5: mainMenuUI(); break;
-    default: cout << "Invalid input! Press 'Enter' to try again!";
-    }
-}
-
-void categoryManagmentUI() {
-    system("cls");
-    int option;
-    cout << "-----------------------------\n";
-    cout << "|   Author Management Menu  |\n";
-    cout << "-----------------------------\n";
-    cout << "| 1> Get all authors        |\n";
-    cout << "| 2> Get author by ID       |\n";
-    cout << "| 3> Create author          |\n";
-    cout << "| 4> Modify author by ID    |\n";
-    cout << "| 5> Delete author by ID    |\n";
-    cout << "| 6> Back to Main Menu      |\n";
-    cout << "-----------------------------\n";
-    cout << "Please choose an option: "; cin >> option;
-    switch (option) {
-    case 1: cout << "callBookManagementUI\n"; break;
-    case 2: cout << "callPatronManagementUI\n"; break;
-    case 3: cout << "callLoanManagementUI\n"; break;
-    case 4: cout << "callAuthorManagementUI\n"; break;
-    case 5: mainMenuUI(); break;
-    default: cout << "Invalid input! Press 'Enter' to try again!";
-    }
-}
-
-void authorManagmentUI() {
-    system("cls");
-    int option;
-    cout << "-----------------------------\n";
-    cout << "|   Author Management Menu  |\n";
-    cout << "-----------------------------\n";
-    cout << "| 1> Get all authors        |\n";
-    cout << "| 2> Get author by ID       |\n";
-    cout << "| 3> Create author          |\n";
-    cout << "| 4> Modify author by ID    |\n";
-    cout << "| 5> Delete author by ID    |\n";
-    cout << "| 6> Back to Main Menu      |\n";
-    cout << "-----------------------------\n";
-    cout << "Please choose an option: "; cin >> option;
-    switch (option) {
-    case 1: cout << "callBookManagementUI\n"; break;
-    case 2: cout << "callPatronManagementUI\n"; break;
-    case 3: cout << "callLoanManagementUI\n"; break;
-    case 4: cout << "callAuthorManagementUI\n"; break;
-    case 5: mainMenuUI(); break;
-    default: cout << "Invalid input! Press 'Enter' to try again!";
-    }
-}
-
 void logoutUI() {
     char option = ' ';
 
@@ -545,7 +529,6 @@ void logoutUI() {
         }
     }
 }
-
 void loginUI() {
     int option;
     string usernameInput;
@@ -568,36 +551,11 @@ void loginUI() {
     }
 }
 
-void mainMenuUI() {
-    system("cls");
-    int option;
-    cout << "----------------------------------\n";
-    cout << "|    LIBRARY MANAGEMENT SYSTEM   |\n";
-    cout << "----------------------------------\n";
-    cout << "| 1> Book Management             |\n";
-    cout << "| 2> Category Management         |\n";
-    cout << "| 3> Author Management           |\n";
-    cout << "| 4> Patron Management           |\n";
-    cout << "| 5> Loan Management             |\n";
-    cout << "| 6> Logout                      |\n";
-    cout << "----------------------------------\n";
-    cout << "Please choose an option: "; cin >> option;
-    switch (option) {
-    case 1: bookManagementUI(); break;
-    case 2: categoryManagmentUI(); break;
-    case 3: authorManagmentUI(); break;
-    case 4: patronManagmentUI(); break;
-    case 5: loanManagmentUI(); break;
-    case 6: logoutUI(); break;
-    default: system("cls"); mainMenuUI();
-    }
-}
-
 int main()
 {
     //username = "phunghoangvnuit";
     //password = "hello_world_123";
-    loginUI();
+    mainMenuUI();
     return 0;
 }
 
