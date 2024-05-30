@@ -3,25 +3,34 @@
 /*Team Member 2:                    */     
 /*Contact: phunghoangvnuit@gmail.com*/
 
-/*NOTE_1: 100% "NO" ChatGPT / "NO" SOURCE CODE*/
+/*NOTE_1: 100% "NO" ChatGPT / "NO" TEMPLATE SOURCE CODE*/
+// I can prove by giving answer for all questions related to this project in presentation day!
 /*NOTE_2: 
-    Exception Handling is in developing until the presentation day!
-    At the moment, please be Friendly User with my program =(((
+    Exception Handling and some sub functions is in developing until the presentation day!
+    At the moment, please be Friendly User with my program =((( . Forgive me!
+
+    Ah, Please DO NOT DELETE any csv files in this project folder, something can work not correctly!
+*/
+/*NOTE_3:
+    If you use MacOS or Linux system("cls") should change to system("clear")
 */
 
-/*Check My Commits on GitHub: https://github.com/phunghoangvnuit/LibMS */
+/*Check my commits on GitHub: https://github.com/phunghoangvnuit/LibMS */
 
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <cctype>
+#include <ctime>
 
 using namespace std;
 
 string username = "phunghoangvnuit";
 string password = "hello_world_123";
 
+void loanManagementUI();
 void patronManagementUI();
 void authorManagementUI();
 void categoryManagementUI();
@@ -30,36 +39,24 @@ void mainMenuUI();
 void loginUI();
 void logoutUI();
 
-/*Library Object Class*/
-class LibObj {
-    protected:
-        int id;
-    public:
-        //Getter & Setter (id)
-        int getId() {
-            return this->id;
-        }
-        void setId(int id) {
-            this->id = id;
-        }
-
-        //CSV Handling
-        bool checkIdExisted() {};
-        void insertIntoCSV()  {};
-        void updateInCSV()    {};
-        void getFromCSV()     {};
-        void removeFromCSV()  {};
-
-        //Association
-        string getTitleNameByIdFromCSV() {};
-};
-
-/*Category Class*/
-class Category : public LibObj {
+/*Book Class*/
+class Book {
 private:
+    int id;
     string title;
+    string isbn;
+    int quantity;
+    int categoryId;
+    int authorId;
 
 public:
+    //Getter & Setter (id)
+    int getId() {
+        return this->id;
+    }
+    void setId(int id) {
+        this->id = id;
+    }
     //Getter & Setter (title)
     string getTitle() {
         return this->title;
@@ -67,16 +64,48 @@ public:
     void setTitle(string title) {
         this->title = title;
     }
-
-    //Book Constructor
-    Category(){};
-    Category(int id, string title) {
-        this->id = id;
-        this->title = title;
+    //Getter & Setter (isbn)
+    string getIsbn() {
+        return this->isbn;
+    }
+    void setIsbn(string isbn) {
+        this->isbn = isbn;
+    }
+    //Getter & Setter (quantity)
+    int getQuantity() {
+        return this->quantity;
+    }
+    void setQuantity(int quantity) {
+        this->quantity = quantity;
+    }
+    //Getter & Setter (categoryId)
+    int getCategoryId() {
+        return this->categoryId;
+    }
+    void setCategory(int category) {
+        this->categoryId = categoryId;
+    }
+    //Getter & Setter (author)
+    int getAuthorId() {
+        return this->authorId;
+    }
+    void setAuthorId(int author) {
+        this->authorId = author;
     }
 
-    //Associatate Category with Book
-    string getTitleNameByIdFromCSV(int categoryId) {
+    //Book Constructor
+    Book() {};
+    Book(int id, string title, string isbn, int quantity, int categoryId, int authorId) {
+        this->id = id;
+        this->title = title;
+        this->isbn = isbn;
+        this->quantity = quantity;
+        this->categoryId = categoryId;
+        this->authorId = authorId;
+    }
+
+    //Associatate Book with Category/Author/Loan
+    string getCategoryById(int categoryId) {
         fstream authorCSV;
         authorCSV.open("category.csv", ios::in);
 
@@ -98,7 +127,603 @@ public:
             }
             authorCSV.close();
         }
+    }
+    string getAuthorById(int authorId) {
+        fstream authorCSV;
+        authorCSV.open("author.csv", ios::in);
+
+        if (authorCSV.is_open()) {
+            string line;
+            while (getline(authorCSV, line)) {
+                vector<string> vectVal;
+                stringstream ss(line);
+
+                while (ss.good()) {
+                    string word;
+                    getline(ss, word, ',');
+                    vectVal.push_back(word);
+                }
+
+                if (stoi(vectVal[0]) == authorId) {
+                    return vectVal[1];
+                }
+            }
+            authorCSV.close();
+        }
+    }
+    string getBookById(int bookId) {
+        fstream bookCSV;
+        bookCSV.open("book.csv", ios::in);
+
+        if (bookCSV.is_open()) {
+            string line;
+            while (getline(bookCSV, line)) {
+                vector<string> vectVal;
+                stringstream ss(line);
+
+                while (ss.good()) {
+                    string word;
+                    getline(ss, word, ',');
+                    vectVal.push_back(word);
+                }
+
+                if (stoi(vectVal[0]) == bookId) {
+                    return vectVal[1];
+                }
+            }
+            bookCSV.close();
+        }
+    }
+    int getBookQty(int bookId) {
+        fstream bookCSV;
+        bookCSV.open("book.csv", ios::in);
+
+        if (bookCSV.is_open()) {
+            string line;
+            while (getline(bookCSV, line)) {
+                vector<string> vectVal;
+                stringstream ss(line);
+
+                while (ss.good()) {
+                    string word;
+                    getline(ss, word, ',');
+                    vectVal.push_back(word);
+                }
+
+                if (stoi(vectVal[0]) == bookId) {
+                    return stoi(vectVal[3]);
+                }
+            }
+            bookCSV.close();
+        }
+    }
+    int checkBookQuantity(int bookId, int borrowQty) {
+        fstream bookCSV;
+        bookCSV.open("book.csv", ios::in);
+
+        if (bookCSV.is_open()) {
+            string line;
+            while (getline(bookCSV, line)) {
+                vector<string> vectVal;
+                stringstream ss(line);
+
+                while (ss.good()) {
+                    string word;
+                    getline(ss, word, ',');
+                    vectVal.push_back(word);
+                }
+
+                if (stoi(vectVal[0]) == bookId) {
+                    if (stoi(vectVal[3]) == 0) { return 0; }; // Message Code 0: Out of Stock
+                    if (stoi(vectVal[3]) - borrowQty >= 0) { return 1; } // Message Code 1: Quantity cannot meet demand
+                }
+            }
+            bookCSV.close();
+            return 2; // Message Code 2: BookId is not existed
+        }
+    }
+    void changeBookQty(int bookId, int change) {
+        fstream bookCSV;
+        bookCSV.open("book.csv", ios::in);
+
+        if (bookCSV.is_open()) {
+            vector<string> vectObj;
+            string line;
+            while (getline(bookCSV, line)) {
+                vector<string> vectVal;
+                stringstream ss(line);
+
+                while (ss.good()) {
+                    string word;
+                    getline(ss, word, ',');
+                    vectVal.push_back(word);
+                }
+
+                if (stoi(vectVal[0]) == bookId) {
+                    vectVal[3] = to_string(stoi(vectVal[3]) + change);
+                    string altLine;
+                    altLine = vectVal[0] + ','
+                            + vectVal[1] + ','
+                            + vectVal[2] + ','
+                            + vectVal[3] + ','
+                            + vectVal[4] + ','
+                            + vectVal[5];
+                    vectObj.push_back(altLine);
+                }
+                else {
+                    vectObj.push_back(line);
+                }
+            }
+            bookCSV.close();
+
+            fstream bookCSV;
+            bookCSV.open("book.csv", ios::out);
+            for (int i = 0; i < vectObj.size(); i++) {
+
+                if (bookCSV.is_open()) {
+                    bookCSV << vectObj[i] << "\n";
+                }
+            }
+            bookCSV.close();
+        }
+    }
+
+
+    /*C.R.U.D - Book.CSV*/
+    // Check BookId If Existed
+    bool checkIdExisted(int id) {
+        fstream bookCSV;
+        bookCSV.open("book.csv", ios::in);
+
+        if (bookCSV.is_open()) {
+            string line;
+            while (getline(bookCSV, line)) {
+                vector<string> vectVal;
+                stringstream ss(line);
+
+                while (ss.good()) {
+                    string word;
+                    getline(ss, word, ',');
+                    vectVal.push_back(word);
+                }
+
+                if (stoi(vectVal[0]) == id) {
+                    return true;
+                }
+            }
+            bookCSV.close();
+            return false;
+        }
+    }
+
+    // Insert Book Into CSV
+    void insertIntoCSV()
+    {
+        fstream bookCSV;
+        bookCSV.open("book.csv", ios::app);
+        if (bookCSV.is_open()) {
+            bookCSV << this->id << ',';
+            bookCSV << this->title << ',';
+            bookCSV << this->isbn << ',';
+            bookCSV << this->quantity << ',';
+            bookCSV << this->categoryId << ',';
+            bookCSV << this->authorId << endl;
+            bookCSV.close();
+        }
+    }
+
+    // Update Book In CSV
+    void updateInCSV(int id, Book book) {
+        fstream bookCSV;
+        bookCSV.open("book.csv", ios::in);
+
+        if (bookCSV.is_open()) {
+            vector<string> vectObj;
+            string line;
+            while (getline(bookCSV, line)) {
+                vector<string> vectVal;
+                stringstream ss(line);
+
+                while (ss.good()) {
+                    string word;
+                    getline(ss, word, ',');
+                    vectVal.push_back(word);
+                }
+
+                if (stoi(vectVal[0]) == id) {
+                    vectVal[0] = to_string(book.getId());
+                    vectVal[1] = book.getTitle();
+                    vectVal[2] = book.getIsbn();
+                    vectVal[3] = to_string(book.getQuantity());
+                    vectVal[4] = to_string(book.getCategoryId());
+                    vectVal[5] = to_string(book.getAuthorId());
+                    string altLine;
+                    altLine = vectVal[0] + ','
+                        + vectVal[1] + ','
+                        + vectVal[2] + ','
+                        + vectVal[3] + ','
+                        + vectVal[4] + ','
+                        + vectVal[5];
+                    vectObj.push_back(altLine);
+                }
+                else {
+                    vectObj.push_back(line);
+                }
+            }
+            bookCSV.close();
+
+            fstream bookCSV;
+            bookCSV.open("book.csv", ios::out);
+            for (int i = 0; i < vectObj.size(); i++) {
+
+                if (bookCSV.is_open()) {
+                    bookCSV << vectObj[i] << "\n";
+                }
+            }
+            bookCSV.close();
+        }
+    }
+
+    // Get Book From CSV
+    void getFromCSV() {
+        fstream bookCSV;
+        bookCSV.open("book.csv", ios::in);
+
+        if (bookCSV.is_open()) {
+            string line;
+            while (getline(bookCSV, line)) {
+                vector<string> vectVal;
+                stringstream ss(line);
+
+                while (ss.good()) {
+                    string word;
+                    getline(ss, word, ',');
+                    vectVal.push_back(word);
+                }
+                Book book;
+                // Use Association To Get Value From Other CSV (Reference Like SQL Database PK_FK)
+                vectVal[4] = book.getCategoryById(stoi(vectVal[4]));
+                vectVal[5] = book.getAuthorById(stoi(vectVal[5]));
+                cout << "----------------------------------\n";
+                cout << "| BookId     :  " << vectVal[0] << " (Current Version)\n";
+                cout << "| Title      :  " << vectVal[1] << "\n";
+                cout << "| ISBN       :  " << vectVal[2] << "\n";
+                cout << "| Quantity   :  " << vectVal[3] << "\n";
+                cout << "| Category   :  " << vectVal[4] << "\n";
+                cout << "| Author     :  " << vectVal[5] << "\n";
+                cout << "----------------------------------\n";
+            }
+            bookCSV.close();
+        }
+    }
+    void getFromCSV(int id) {
+        fstream bookCSV;
+        bookCSV.open("book.csv", ios::in);
+
+        if (bookCSV.is_open()) {
+            string line;
+            while (getline(bookCSV, line)) {
+                vector<string> vectVal;
+                stringstream ss(line);
+
+                while (ss.good()) {
+                    string word;
+                    getline(ss, word, ',');
+                    vectVal.push_back(word);
+                }
+
+                if (stoi(vectVal[0]) == id) {
+                    Book book;
+                    // Use Association To Get Value From Other CSV (Reference Like SQL Database PK_FK)
+                    vectVal[4] = book.getCategoryById(stoi(vectVal[4]));
+                    vectVal[5] = book.getAuthorById(stoi(vectVal[5]));
+                    cout << "----------------------------------\n";
+                    cout << "| BookId     :  " << vectVal[0] << " (Current Version)\n";
+                    cout << "| Title      :  " << vectVal[1] << "\n";
+                    cout << "| ISBN       :  " << vectVal[2] << "\n";
+                    cout << "| Quantity   :  " << vectVal[3] << " (CurrentQty)\n"; 
+                    cout << "| Category   :  " << vectVal[4] << "\n";
+                    cout << "| Author     :  " << vectVal[5] << "\n";
+                    cout << "----------------------------------\n";
+                    return;
+                }
+            }
+            bookCSV.close();
+        }
+    }
+
+    // Remove Book From CSV
+    void removeFromCSV(int id) {
+        fstream bookCSV;
+        bookCSV.open("book.csv", ios::in);
+
+        if (bookCSV.is_open()) {
+            vector<string> vectObj;
+            string line;
+            while (getline(bookCSV, line)) {
+                vector<string> vectVal;
+                stringstream ss(line);
+
+                while (ss.good()) {
+                    string word;
+                    getline(ss, word, ',');
+                    vectVal.push_back(word);
+                }
+
+                if (stoi(vectVal[0]) != id) {
+                    vectObj.push_back(line);
+                }
+            }
+            bookCSV.close();
+
+            fstream bookCSV;
+            bookCSV.open("book.csv", ios::out);
+            for (int i = 0; i < vectObj.size(); i++) {
+                if (bookCSV.is_open()) {
+                    bookCSV << vectObj[i] << "\n";
+                }
+            }
+            bookCSV.close();
+        }
+    }
+};
+void createBookUI() {
+    int id;
+    string title;
+    string isbn;
+    int quantity;
+    int categoryId;
+    int authorId;
+    Book book;
+
+    system("cls");
+    cout << "----------------------------------\n";
+    cout << "|        CREATE BOOK FORM        |\n";
+    cout << "----------------------------------\n";
+    cout << "| BookId     :  "; cin >> id;
+    if (book.checkIdExisted(id)) {
+        cout << "----------------------------------\n";
+        book.getFromCSV(id);
+        cout << "Notice[!]: Id Is Already Exsited \n";
+        system("pause");
+        bookManagementUI();
+        return;
     };
+    cout << "| Title      :  "; getline(cin >> ws, title);
+    cout << "| ISBN       :  "; getline(cin >> ws, isbn);
+    cout << "| Quantity   :  "; cin >> quantity;
+    cout << "| CategoryId :  "; cin >> categoryId;
+    cout << "| Category   :  " << book.getCategoryById(categoryId) << endl;
+    cout << "| AuthorId   :  "; cin >> authorId;
+    cout << "| Category   :  " << book.getAuthorById(authorId) << endl;
+    cout << "----------------------------------\n";
+    cout << "----------------------------------\n";
+    cout << "|       CONFIRM TO CREATE ?      |\n";
+    cout << "----------------------------------\n";
+    cout << "|      YES      |     Cancel     |\n";
+    cout << "----------------------------------\n";
+    char option = ' ';
+    while (option != 'Y' && option != 'N') {
+        cout << "Enter (Y/N): "; cin >> option;
+        if (toupper(option) == 'Y') {
+            Book newBook(id, title, isbn, quantity, categoryId, authorId);
+            newBook.insertIntoCSV();
+            cout << "Notice[!]: Book Created \n";
+            system("pause");
+            bookManagementUI();
+        }
+        else if (toupper(option) == 'N') {
+            bookManagementUI();
+        }
+    }
+}
+void getAllBookUI() {
+    Book book;
+
+    system("cls");
+    cout << "----------------------------------\n";
+    cout << "|       BOOK MANAGEMENT MENU     |\n";
+    cout << "----------------------------------\n";
+    book.getFromCSV();
+    system("pause");
+    bookManagementUI();
+    return;
+};
+void getBookByIdUI() {
+    int id;
+    Book book;
+
+    system("cls");
+    cout << "----------------------------------\n";
+    cout << "|       BOOK MANAGEMENT MENU     |\n";
+    cout << "----------------------------------\n";
+    cout << "| BookId   :  "; cin >> id;
+    cout << "----------------------------------\n";
+    if (!book.checkIdExisted(id)) {
+        cout << "Notice[!]: Id Is Not Exsited \n";
+        system("pause");
+        bookManagementUI();
+        return;
+    };
+    book.getFromCSV(id);
+    system("pause");
+    bookManagementUI();
+    return;
+};
+void updateBookUI() {
+    int id;
+    string title;
+    string isbn;
+    int quantity;
+    int categoryId;
+    int authorId;
+    Book book;
+
+    system("cls");
+    cout << "----------------------------------\n";
+    cout << "|        UPDATE BOOK FORM        |\n";
+    cout << "----------------------------------\n";
+    cout << "| BookId     :  "; cin >> id;
+    cout << "----------------------------------\n";
+    if (!book.checkIdExisted(id)) {
+        cout << "Notice[!]: Id Is Not Exsited \n";
+        system("pause");
+        bookManagementUI();
+        return;
+    };
+    book.getFromCSV(id);
+    cout << "----------------------------------\n";
+    cout << "| BookId     :  " << id << " (Update Version)\n";
+    cout << "| Title      :  "; getline(cin >> ws, title);
+    cout << "| ISBN       :  "; getline(cin >> ws, isbn);
+    cout << "| Quantity   :  "; cin >> quantity;
+    cout << "| CategoryId :  "; cin >> categoryId;
+    cout << "| Category   :  " << book.getCategoryById(categoryId) << endl;
+    cout << "| AuthorId   :  "; cin >> authorId;
+    cout << "| Category   :  " << book.getAuthorById(authorId) << endl;
+    cout << "----------------------------------\n";
+    cout << "----------------------------------\n";
+    cout << "|     YOU WANT TO REPLACED ?     |\n";
+    cout << "----------------------------------\n";
+    cout << "|      YES      |     Cancel     |\n";
+    cout << "----------------------------------\n";
+    char option = ' ';
+    while (option != 'Y' && option != 'N') {
+        cout << "Enter (Y/N): "; cin >> option;
+        if (toupper(option) == 'Y') {
+            Book altBook(id, title, isbn, quantity, categoryId, authorId);
+            altBook.updateInCSV(id, altBook);
+            cout << "Notice[!]: Book Updated \n";
+            system("pause");
+            bookManagementUI();
+        }
+        else if (toupper(option) == 'N') {
+            bookManagementUI();
+        }
+    }
+}
+void deleteBookUI() {
+    int id;
+    Book book;
+
+    system("cls");
+    cout << "----------------------------------\n";
+    cout << "|        DELETE BOOK FORM        |\n";
+    cout << "----------------------------------\n";
+    cout << "| BookId   :  "; cin >> id;
+    cout << "----------------------------------\n";
+    if (!book.checkIdExisted(id)) {
+        cout << "Notice[!]: Id Is Not Exsited \n";
+        system("pause");
+        bookManagementUI();
+        return;
+    };
+    book.getFromCSV(id);
+    cout << "----------------------------------\n";
+    cout << "|       YOU WANT TO DELETE?      |\n";
+    cout << "----------------------------------\n";
+    cout << "|      YES      |     Cancel     |\n";
+    cout << "----------------------------------\n";
+    char option = ' ';
+    while (option != 'Y' && option != 'N') {
+        cout << "Enter (Y/N): "; cin >> option;
+        if (toupper(option) == 'Y') {
+            book.removeFromCSV(id);
+            cout << "Notice[!]: Book Deleted \n";
+            system("pause");
+            bookManagementUI();
+        }
+        else if (toupper(option) == 'N') {
+            bookManagementUI();
+        }
+    }
+}
+void bookManagementUI() {
+    int option;
+
+    system("cls");
+    cout << "----------------------------------\n";
+    cout << "|       BOOK MANAGEMENT MENU     |\n";
+    cout << "----------------------------------\n";
+    cout << "| 1> Get all books               |\n";
+    cout << "| 2> Get book by ID              |\n";
+    cout << "| 3> Get book by title    (NO)   |\n"; // in developing search by keyword
+    cout << "| 4> Get book by category (NO)   |\n"; // in developing search by keyword
+    cout << "| 5> Get book by author   (NO)   |\n"; // in developing search by keyword
+    cout << "| 6> Create book                 |\n";
+    cout << "| 7> Modify book by ID           |\n";
+    cout << "| 8> Delete book by ID           |\n";
+    cout << "| 9> Back to Main Menu           |\n";
+    cout << "----------------------------------\n";
+    cout << "Please choose an option: "; cin >> option;
+    switch (option) {
+    case 1: getAllBookUI(); break;
+    case 2: getBookByIdUI(); break;
+    case 3: cout << "This Function is in Developing!\n"; system("pause"); bookManagementUI(); break;
+    case 4: cout << "This Function is in Developing!\n"; system("pause"); bookManagementUI(); break;
+    case 5: cout << "This Function is in Developing!\n"; system("pause"); bookManagementUI(); break;
+    case 6: createBookUI(); break;
+    case 7: updateBookUI(); break;
+    case 8: deleteBookUI(); break;
+    case 9: system("cls"); mainMenuUI(); break;
+    default: { cout << "Invalid input\n"; system("pause"); system("cls"); bookManagementUI(); };
+    }
+}
+
+/*Category Class*/
+class Category{
+private:
+    int id;
+    string title;
+
+public:
+    //Getter & Setter (id)
+    int getId() {
+        return this->id;
+    }
+    void setId(int id) {
+        this->id = id;
+    }
+    //Getter & Setter (title)
+    string getTitle() {
+        return this->title;
+    }
+    void setTitle(string title) {
+        this->title = title;
+    }
+
+    //Book Constructor
+    Category(){};
+    Category(int id, string title) {
+        this->id = id;
+        this->title = title;
+    }
+
+    // Associate With Book
+    bool checkCategoryReference(int categoryId) {
+        fstream bookCSV;
+        bookCSV.open("book.csv", ios::in);
+
+        if (bookCSV.is_open()) {
+            string line;
+            while (getline(bookCSV, line)) {
+                vector<string> vectVal;
+                stringstream ss(line);
+
+                while (ss.good()) {
+                    string word;
+                    getline(ss, word, ',');
+                    vectVal.push_back(word);
+                }
+
+                if (stoi(vectVal[4]) == categoryId) {
+                    return true;
+                }
+            }
+            bookCSV.close();
+            return false;
+        }
+    }
 
     /*C.R.U.D - Category.CSV*/
     // Check CategoryId If Existed
@@ -402,6 +1027,11 @@ void deleteCategoryUI() {
         system("pause");
         categoryManagementUI();
         return;
+    } else if (category.checkCategoryReference(id)) {
+        cout << "Notice[!]: Cannot Delete \nMake Sure No Book References To This Category\n";
+        system("pause");
+        categoryManagementUI();
+        return;
     };
     category.getFromCSV(id);
     cout << "----------------------------------\n";
@@ -432,29 +1062,39 @@ void categoryManagementUI() {
     cout << "----------------------------------\n";
     cout << "| 1> Get all categories          |\n";
     cout << "| 2> Get category by ID          |\n";
-    cout << "| 3> Create category             |\n";
-    cout << "| 4> Modify category by ID       |\n";
-    cout << "| 5> Delete category by ID       |\n";
-    cout << "| 6> Back to Main Menu           |\n";
+    cout << "| 3> Get category by title (NO)  |\n"; // in developing search by keyword
+    cout << "| 4> Create category             |\n";
+    cout << "| 5> Modify category by ID       |\n";
+    cout << "| 6> Delete category by ID       |\n";
+    cout << "| 7> Back to Main Menu           |\n";
     cout << "----------------------------------\n";
     cout << "Please choose an option: "; cin >> option;
     switch (option) {
     case 1: getAllCategoryUI(); break;
     case 2: getCategoryByIdUI(); break;
-    case 3: createCategoryUI(); break;
-    case 4: updateCategoryUI(); break;
-    case 5: deleteCategoryUI(); break;
-    case 6: system("cls"); mainMenuUI(); break;
+    case 3: cout << "This Function is in Developing!\n"; system("pause"); categoryManagementUI(); break;
+    case 4: createCategoryUI(); break;
+    case 5: updateCategoryUI(); break;
+    case 6: deleteCategoryUI(); break;
+    case 7: system("cls"); mainMenuUI(); break;
     default: { cout << "Invalid input\n"; system("pause"); system("cls"); categoryManagementUI(); };
     }
 }
 
 /*Author Class*/
-class Author : public LibObj{
+class Author{
 private:
+    int id;
     string name;
 
 public:
+    //Getter & Setter (id)
+    int getId() {
+        return this->id;
+    }
+    void setId(int id) {
+        this->id = id;
+    }
     //Getter & Setter (name)
     string getName() {
         return this->name;
@@ -470,14 +1110,14 @@ public:
         this->name = name;
     }
 
-    //Associatate Author with Book
-    string getTitleNameByIdFromCSV(int authorId) {
-        fstream authorCSV;
-        authorCSV.open("author.csv", ios::in);
+    //Associatate With Book
+    bool checkAuthorReference(int authorId) {
+        fstream bookCSV;
+        bookCSV.open("book.csv", ios::in);
 
-        if (authorCSV.is_open()) {
+        if (bookCSV.is_open()) {
             string line;
-            while (getline(authorCSV, line)) {
+            while (getline(bookCSV, line)) {
                 vector<string> vectVal;
                 stringstream ss(line);
 
@@ -487,13 +1127,14 @@ public:
                     vectVal.push_back(word);
                 }
 
-                if (stoi(vectVal[0]) == authorId) {
-                    return vectVal[1];
+                if (stoi(vectVal[5]) == authorId) {
+                    return true;
                 }
             }
-            authorCSV.close();
+            bookCSV.close();
+            return false;
         }
-    };
+    }
 
     /*C.R.U.D - Author.CSV*/
     // Check AuthorId If Existed
@@ -796,6 +1437,11 @@ void deleteAuthorUI() {
     system("pause");
     authorManagementUI();
     return;
+    } else if (author.checkAuthorReference(id)) {
+    cout << "Notice[!]: Cannot Delete \nMake Sure No Book References To This Author\n";
+    system("pause");
+    authorManagementUI();
+    return;
     };
     author.getFromCSV(id);
     cout << "----------------------------------\n";
@@ -826,31 +1472,41 @@ void authorManagementUI() {
     cout << "----------------------------------\n";
     cout << "| 1> Get all authors             |\n";
     cout << "| 2> Get author by ID            |\n";
-    cout << "| 3> Create author               |\n";
-    cout << "| 4> Modify author by ID         |\n";
-    cout << "| 5> Delete author by ID         |\n";
-    cout << "| 6> Back to Main Menu           |\n";
+    cout << "| 3> Get author by name (NO)     |\n"; // in developing search by keyword
+    cout << "| 4> Create author               |\n";
+    cout << "| 5> Modify author by ID         |\n";
+    cout << "| 6> Delete author by ID         |\n";
+    cout << "| 7> Back to Main Menu           |\n";
     cout << "----------------------------------\n";
     cout << "Please choose an option: "; cin >> option;
     switch (option) {
     case 1: getAllAuthorUI(); break;
     case 2: getAuthorByIdUI(); break;
-    case 3: createAuthorUI(); break;
-    case 4: updateAuthorUI(); break;
-    case 5: deleteAuthorUI(); break;
-    case 6: system("cls"); mainMenuUI(); break;
+    case 3: cout << "This Function is in Developing!\n"; system("pause"); authorManagementUI(); break;
+    case 4: createAuthorUI(); break;
+    case 5: updateAuthorUI(); break;
+    case 6: deleteAuthorUI(); break;
+    case 7: system("cls"); mainMenuUI(); break;
     default: { cout << "Invalid input\n"; system("pause"); system("cls"); authorManagementUI(); };
     }
 }
 
 /*Patron Class*/
-class Patron : public LibObj {
+class Patron{
 private:
+    int id;
     string name;
     string phoneNumber;
     string email;
 
 public:
+    //Getter & Setter (id)
+    int getId() {
+        return this->id;
+    }
+    void setId(int id) {
+        this->id = id;
+    }
     //Getter & Setter (name)
     string getName() {
         return this->name;
@@ -882,15 +1538,40 @@ public:
         this->email = email;
     }
 
+    //Associatate Book with Category/Author/Loan
+    string getPatronById(int patronId) {
+        fstream patronCSV;
+        patronCSV.open("patron.csv", ios::in);
+
+        if (patronCSV.is_open()) {
+            string line;
+            while (getline(patronCSV, line)) {
+                vector<string> vectVal;
+                stringstream ss(line);
+
+                while (ss.good()) {
+                    string word;
+                    getline(ss, word, ',');
+                    vectVal.push_back(word);
+                }
+
+                if (stoi(vectVal[0]) == patronId) {
+                    return vectVal[1];
+                }
+            }
+            patronCSV.close();
+        }
+    }
+
     /*C.R.U.D - Author.CSV*/
     // Check PatronId If Existed
     bool checkIdExisted(int id) {
-        fstream authorCSV;
-        authorCSV.open("patron.csv", ios::in);
+        fstream patronCSV;
+        patronCSV.open("patron.csv", ios::in);
 
-        if (authorCSV.is_open()) {
+        if (patronCSV.is_open()) {
             string line;
-            while (getline(authorCSV, line)) {
+            while (getline(patronCSV, line)) {
                 vector<string> vectVal;
                 stringstream ss(line);
 
@@ -904,7 +1585,7 @@ public:
                     return true;
                 }
             }
-            authorCSV.close();
+            patronCSV.close();
             return false;
         }
     }
@@ -1016,10 +1697,10 @@ public:
 
                 if (stoi(vectVal[0]) == id) {
                     cout << "----------------------------------\n";
-                    cout << "| AuthId   :  " << vectVal[0] << " (Current Version)\n";
-                    cout << "| Name     :  " << vectVal[1] << "\n";
-                    cout << "| Phone    :  " << vectVal[2] << "\n";
-                    cout << "| Email    :  " << vectVal[3] << "\n";
+                    cout << "| PatrId     :  " << vectVal[0] << " (Current Version)\n";
+                    cout << "| Name       :  " << vectVal[1] << "\n";
+                    cout << "| Phone      :  " << vectVal[2] << "\n";
+                    cout << "| Email      :  " << vectVal[3] << "\n";
                     cout << "----------------------------------\n";
                     return;
                 }
@@ -1084,6 +1765,8 @@ void createPatronUI() {
         return;
     };
     cout << "| Name     :  "; getline(cin >> ws, name);
+    cout << "| Phone    :  "; getline(cin >> ws, phoneNumber);
+    cout << "| Email    :  "; getline(cin >> ws, email);
     cout << "----------------------------------\n";
     cout << "----------------------------------\n";
     cout << "|       CONFIRM TO CREATE ?      |\n";
@@ -1229,317 +1912,585 @@ void patronManagementUI() {
     cout << "----------------------------------\n";
     cout << "| 1> Get all patrons             |\n";
     cout << "| 2> Get patron by ID            |\n";
-    cout << "| 3> Create patron               |\n";
-    cout << "| 4> Modify patron by ID         |\n";
-    cout << "| 5> Delete patron by ID         |\n";
-    cout << "| 6> Back to Main Menu           |\n";
+    cout << "| 3> Get patron by name (NO)     |\n"; // in developing search by keyword
+    cout << "| 4> Create patron               |\n";
+    cout << "| 5> Modify patron by ID         |\n";
+    cout << "| 6> Delete patron by ID         |\n";
+    cout << "| 7> Back to Main Menu           |\n";
     cout << "----------------------------------\n";
     cout << "Please choose an option: "; cin >> option;
     switch (option) {
     case 1: getAllPatronUI(); break;
     case 2: getPatronByIdUI(); break;
-    case 3: createPatronUI(); break;
-    case 4: updatePatronUI(); break;
-    case 5: deletePatronUI(); break;
-    case 6: system("cls"); mainMenuUI(); break;
+    case 3: cout << "This Function is in Developing!\n"; patronManagementUI(); system("pause"); break;
+    case 4: createPatronUI(); break;
+    case 5: updatePatronUI(); break;
+    case 6: deletePatronUI(); break;
+    case 7: system("cls"); mainMenuUI(); break;
     default: { cout << "Invalid input\n"; system("pause"); system("cls"); patronManagementUI(); };
     }
 }
 
-/*Book Class*/
-class Book : private LibObj {
-private:
-    string title;
-    string isbn;
-    int quantity;
-    int categoryId;
-    int authorId;
-    Category categoryObj;
-    Author authorObj;
+/*Loan Class*/
+class Loan {
+protected:
+    int id;
+    int patronId;
+    int bookId;
+
+    Book book;
+    Author author;
+    Patron patron;
 
 public:
-    //Getter & Setter (title)
-    string getTitle() {
-        return this->title;
+    //Getter & Setter (id)
+    int getId() {
+        return this->id;
     }
-    void setTitle(string title) {
-        this->title = title;
-    }
-    //Getter & Setter (isbn)
-    string getIsbn() {
-        return this->isbn;
-    }
-    void setIsbn(string isbn) {
-        this->isbn = isbn;
-    }
-    //Getter & Setter (quantity)
-    int getQuantity() {
-        return this->quantity;
-    }
-    void setQuantity(int quantity) {
-        this->quantity = quantity;
-    }
-    //Getter & Setter (categoryId)
-    int getCategoryId() {
-        return this->categoryId;
-    }
-    void setCategory(int category) {
-        this->categoryId = categoryId;
-    }
-    //Getter & Setter (author)
-    int getAuthorId() {
-        return this->authorId;
-    }
-    void setAuthorId(int author) {
-        this->authorId = author;
-    }
-
-    //Book Constructor
-    Book() {};
-    Book(int id, string title, string isbn, int quantity, int categoryId, int authorId) {
+    void setId(int id) {
         this->id = id;
-        this->title = title;
-        this->isbn = isbn;
-        this->quantity = quantity;
-        this->categoryId = categoryId;
-        this->authorId = authorId;
+    }
+    //Getter & Setter (patronId)
+    int getPatronId() {
+        return this->patronId;
+    }
+    void setPatronId(int patronId) {
+        this->patronId = patronId;
+    }
+    //Getter & Setter (bookId)
+    int getBookId() {
+        return this->bookId;
+    }
+    void setBookId(int bookId) {
+        this->bookId = bookId;
     }
 
-    //Associatate Book with Category/Author
-    string getCategoryById(int categoryId) {
-        return categoryObj.getTitleNameByIdFromCSV(categoryId);
+    //Loan Constructor
+    Loan() {};
+
+    //Association between Loan & Book
+    string returnBook(int bookId, int change) {
+        book.changeBookQty(bookId, +change); return "Notice[!]: Book Returned \n";
     }
-    string getAuthorById(int authorId) {
-        return authorObj.getTitleNameByIdFromCSV(authorId);
-    }
-
-    /*C.R.U.D - Book.CSV*/
-    // Check BookId If Existed
-    bool checkIdExisted(int id) {
-        fstream bookCSV;
-        bookCSV.open("book.csv", ios::in);
-
-        if (bookCSV.is_open()) {
-            string line;
-            while (getline(bookCSV, line)) {
-                vector<string> vectVal;
-                stringstream ss(line);
-
-                while (ss.good()) {
-                    string word;
-                    getline(ss, word, ',');
-                    vectVal.push_back(word);
-                }
-
-                if (stoi(vectVal[0]) == id) {
-                    return true;
-                }
-            }
-            bookCSV.close();
-            return false;
-        }
-    }
-
-    // Insert Book Into CSV
-    void insertIntoCSV()
-    {
-        fstream bookCSV;
-        bookCSV.open("book.csv", ios::app);
-        if (bookCSV.is_open()) {
-            bookCSV << this->id << ',';
-            bookCSV << this->title << ',';
-            bookCSV << this->isbn << ',';
-            bookCSV << this->quantity << ',';
-            bookCSV << this->categoryId << ',';
-            bookCSV << this->authorId << endl;
-            bookCSV.close();
-        }
-    }
-
-    // Update Book In CSV
-    void updateInCSV(int id, Book book) {
-        fstream bookCSV;
-        bookCSV.open("book.csv", ios::in);
-
-        if (bookCSV.is_open()) {
-            vector<string> vectObj;
-            string line;
-            while (getline(bookCSV, line)) {
-                vector<string> vectVal;
-                stringstream ss(line);
-
-                while (ss.good()) {
-                    string word;
-                    getline(ss, word, ',');
-                    vectVal.push_back(word);
-                }
-
-                if (stoi(vectVal[0]) == id) {
-                    vectVal[0] = to_string(book.getId());
-                    vectVal[1] = book.getTitle();
-                    vectVal[2] = book.getIsbn();
-                    vectVal[3] = to_string(book.getQuantity());
-                    vectVal[4] = book.getCategoryId();
-                    vectVal[5] = to_string(book.getAuthorId());
-                    string altLine;
-                    altLine = vectVal[0] + ','
-                        + vectVal[1] + ','
-                        + vectVal[2] + ','
-                        + vectVal[3] + ','
-                        + vectVal[4] + ','
-                        + vectVal[5];
-                    vectObj.push_back(altLine);
-                }
-                else {
-                    vectObj.push_back(line);
-                }
-            }
-            bookCSV.close();
-
-            fstream bookCSV;
-            bookCSV.open("book.csv", ios::out);
-            for (int i = 0; i < vectObj.size(); i++) {
-
-                if (bookCSV.is_open()) {
-                    bookCSV << vectObj[i] << "\n";
-                }
-            }
-            bookCSV.close();
-        }
-    }
-
-    // Get Book From CSV
-    void getFromCSV() {
-        fstream bookCSV;
-        bookCSV.open("book.csv", ios::in);
-
-        if (bookCSV.is_open()) {
-            string line;
-            while (getline(bookCSV, line)) {
-                vector<string> vectVal;
-                stringstream ss(line);
-
-                while (ss.good()) {
-                    string word;
-                    getline(ss, word, ',');
-                    vectVal.push_back(word);
-                }
-                Book book;
-                // Use Association To Get Value From Other CSV (Reference Like SQL Database PK_FK)
-                vectVal[4] = book.getCategoryById(stoi(vectVal[4]));
-                vectVal[5] = book.getAuthorById(stoi(vectVal[5]));
-                cout << "----------------------------------\n";
-                cout << "| BookId     :  " << vectVal[0] << " (Current Version)\n";
-                cout << "| Title      :  " << vectVal[1] << "\n";
-                cout << "| ISBN       :  " << vectVal[2] << "\n";
-                cout << "| Quantity   :  " << vectVal[3] << "\n";
-                cout << "| Category   :  " << vectVal[4] << "\n";
-                cout << "| Author     :  " << vectVal[5] << "\n";
-                cout << "----------------------------------\n";
-            }
-            bookCSV.close();
-        }
-    }
-    void getFromCSV(int id) {
-        fstream bookCSV;
-        bookCSV.open("book.csv", ios::in);
-
-        if (bookCSV.is_open()) {
-            string line;
-            while (getline(bookCSV, line)) {
-                vector<string> vectVal;
-                stringstream ss(line);
-
-                while (ss.good()) {
-                    string word;
-                    getline(ss, word, ',');
-                    vectVal.push_back(word);
-                }
-
-                if (stoi(vectVal[0]) == id) {
-                    Book book;
-                    // Use Association To Get Value From Other CSV (Reference Like SQL Database PK_FK)
-                    vectVal[4] = book.getCategoryById(stoi(vectVal[4]));
-                    vectVal[5] = book.getAuthorById(stoi(vectVal[5]));
-                    cout << "----------------------------------\n";
-                    cout << "| BookId     :  " << vectVal[0] << " (Current Version)\n";
-                    cout << "| Title      :  " << vectVal[1] << "\n";
-                    cout << "| ISBN       :  " << vectVal[2] << "\n";
-                    cout << "| Quantity   :  " << vectVal[3] << "\n";
-                    cout << "| Category   :  " << vectVal[4] << "\n";
-                    cout << "| Author     :  " << vectVal[5] << "\n";
-                    cout << "----------------------------------\n";
-                    return;
-                }
-            }
-            bookCSV.close();
-        }
-    }
-
-    // Remove Book From CSV
-    void removeFromCSV(int id) {
-        fstream bookCSV;
-        bookCSV.open("book.csv", ios::in);
-
-        if (bookCSV.is_open()) {
-            vector<string> vectObj;
-            string line;
-            while (getline(bookCSV, line)) {
-                vector<string> vectVal;
-                stringstream ss(line);
-
-                while (ss.good()) {
-                    string word;
-                    getline(ss, word, ',');
-                    vectVal.push_back(word);
-                }
-
-                if (stoi(vectVal[0]) != id) {
-                    vectObj.push_back(line);
-                }
-            }
-            bookCSV.close();
-
-            fstream bookCSV;
-            bookCSV.open("book.csv", ios::out);
-            for (int i = 0; i < vectObj.size(); i++) {
-                if (bookCSV.is_open()) {
-                    bookCSV << vectObj[i] << "\n";
-                }
-            }
-            bookCSV.close();
-        }
+    string borrowBook(int bookId, int change) {
+        if (!book.checkIdExisted(bookId)) return "Notice[!]: Id Is Not Exsited \n";
+        if (!book.checkBookQuantity(bookId, -change)) return "Notice[!]: Not Enough Book \n";
+        book.changeBookQty(bookId, -change); return "Notice[!]: Book Borrowed \n";
     }
 };
-void createBookUI() {
+class BorrowHistory : private Loan {
+    private:
+        int borrowQty;
+        string borrowDate; // Using local_date then tranform into a string is in developing 
+        string dueDate; // Using local_date then tranform into a string is in developing 
+    public:
+        //Getter & Setter (borrowQty)
+        int getBorrowQty() {
+            return this->borrowQty;
+        }
+        void setBorrowQty(int borrowQty) {
+            this->borrowQty = borrowQty;
+        }
+        //Getter & Setter (borrowDate)
+        string getBorrowDate() {
+            return this->borrowDate;
+        }
+        string setBorrowDate(string borrowDate) {
+            this->borrowDate = borrowDate;
+        }
+        //Getter & Setter (borrowDate)
+        string getDueDate() {
+            return this->dueDate;
+        }
+        string setDueDate(string dueDate) {
+            this->dueDate = dueDate;
+        }
+
+        //BorrowHistory Constructor
+        BorrowHistory() {};
+        BorrowHistory(int id, int patronId, int bookId, int borrowQty, string borrowDate, string dueDate) {
+            this->id = id;
+            this->patronId = patronId;
+            this->bookId = bookId;
+            this->borrowQty = borrowQty;
+            this->borrowDate = borrowDate;
+            this->dueDate = dueDate;
+        };
+        
+        /*C.R.U.D - borrowHistory.CSV*/
+        // Check LoanId If Existed
+        bool checkIdExisted(int id) {
+            fstream borrowHistoryCSV;
+            borrowHistoryCSV.open("borrowHistory.csv", ios::in);
+
+            if (borrowHistoryCSV.is_open()) {
+                string line;
+                while (getline(borrowHistoryCSV, line)) {
+                    vector<string> vectVal;
+                    stringstream ss(line);
+
+                    while (ss.good()) {
+                        string word;
+                        getline(ss, word, ',');
+                        vectVal.push_back(word);
+                    }
+
+                    if (stoi(vectVal[0]) == id) {
+                        return true;
+                    }
+                }
+                borrowHistoryCSV.close();
+                return false;
+            }
+        }
+
+        // Insert Loan Into CSV
+        void insertIntoCSV()
+        {
+            fstream borrowHistoryCSV;
+            borrowHistoryCSV.open("borrowHistory.csv", ios::app);
+
+            if (borrowHistoryCSV.is_open()) {
+                borrowHistoryCSV << this->id << ',';
+                borrowHistoryCSV << this->patronId << ',';
+                borrowHistoryCSV << this->bookId << ',';
+                borrowHistoryCSV << this->borrowQty << ',';
+                borrowHistoryCSV << this->borrowDate << ',';
+                borrowHistoryCSV << this->dueDate << endl;
+                borrowHistoryCSV.close();
+            }
+        }
+
+        // Update Loan From CSV
+        void updateInCSV(int id, BorrowHistory borrowHistory) {
+            fstream borrowHistoryCSV;
+            borrowHistoryCSV.open("borrowHistory.csv", ios::in);
+
+            if (borrowHistoryCSV.is_open()) {
+                vector<string> vectObj;
+                string line;
+                while (getline(borrowHistoryCSV, line)) {
+                    vector<string> vectVal;
+                    stringstream ss(line);
+
+                    while (ss.good()) {
+                        string word;
+                        getline(ss, word, ',');
+                        vectVal.push_back(word);
+                    }
+
+                    if (stoi(vectVal[0]) == id) {
+                        vectVal[0] = to_string(borrowHistory.getId());
+                        vectVal[1] = borrowHistory.getPatronId();
+                        vectVal[2] = borrowHistory.getBookId();
+                        vectVal[3] = borrowHistory.getBorrowQty();
+                        vectVal[4] = borrowHistory.getBorrowDate();
+                        vectVal[5] = borrowHistory.getDueDate();
+                        string altLine;
+                        altLine = vectVal[0] + ','
+                                + vectVal[1] + ','
+                                + vectVal[2] + ','
+                                + vectVal[3] + ','
+                                + vectVal[4] + ','
+                                + vectVal[5];
+                        vectObj.push_back(altLine);
+                    }
+                    else {
+                        vectObj.push_back(line);
+                    }
+                }
+                borrowHistoryCSV.close();
+
+                fstream borrowHistoryCSV;
+                borrowHistoryCSV.open("borrowHistory.csv", ios::out);
+                for (int i = 0; i < vectObj.size(); i++) {
+
+                    if (borrowHistoryCSV.is_open()) {
+                        borrowHistoryCSV << vectObj[i] << "\n";
+                    }
+                }
+                borrowHistoryCSV.close();
+            }
+        }
+
+        // Get Author From CSV
+        void getFromCSV() {
+            fstream borrowHistoryCSV;
+            borrowHistoryCSV.open("borrowHistory.csv", ios::in);
+
+            if (borrowHistoryCSV.is_open()) {
+                string line;
+                while (getline(borrowHistoryCSV, line)) {
+                    vector<string> vectVal;
+                    stringstream ss(line);
+
+                    while (ss.good()) {
+                        string word;
+                        getline(ss, word, ',');
+                        vectVal.push_back(word);
+                    }
+                    cout << "----------------------------------\n";
+                    cout << "| BorrowId   :  " << vectVal[0] << " (Current Version)\n";
+                    patron.getFromCSV(stoi(vectVal[1]));
+                    book.getFromCSV(stoi(vectVal[2]));
+                    cout << "----------------------------------\n";
+                    cout << "| BorrowQty  :  " << vectVal[3] << " (CurrentQty)\n";
+                    cout << "| BorrowDate :  " << vectVal[4] << "\n";
+                    cout << "| DueDate    :  " << vectVal[5] << "\n";
+                    cout << "----------------------------------\n\n\n\n";
+                }
+                borrowHistoryCSV.close();
+            }
+        }
+        void getFromCSV(int id) {
+            fstream borrowHistoryCSV;
+            borrowHistoryCSV.open("borrowHistory.csv", ios::in);
+
+            if (borrowHistoryCSV.is_open()) {
+                string line;
+                while (getline(borrowHistoryCSV, line)) {
+                    vector<string> vectVal;
+                    stringstream ss(line);
+
+                    while (ss.good()) {
+                        string word;
+                        getline(ss, word, ',');
+                        vectVal.push_back(word);
+                    }
+
+                    if (stoi(vectVal[0]) == id) {
+                        cout << "----------------------------------\n";
+                        cout << "| BorrowId   :  " << vectVal[0] << " (Current Version)\n";
+                        patron.getFromCSV(stoi(vectVal[1]));
+                        book.getFromCSV(stoi(vectVal[2]));
+                        cout << "| BorrowQty  :  " << vectVal[3] << "\n";
+                        cout << "| BorrowDate :  " << vectVal[4] << "\n";
+                        cout << "| DueDate    :  " << vectVal[5] << "\n";
+                        cout << "----------------------------------\n";
+                        return;
+                    }
+                }
+                borrowHistoryCSV.close();
+            }
+        }
+
+        // Remove Author From CSV
+        void removeFromCSV(int id) {
+            fstream borrowHistoryCSV;
+            borrowHistoryCSV.open("borrowHistory.csv", ios::in);
+
+            if (borrowHistoryCSV.is_open()) {
+                vector<string> vectObj;
+                string line;
+                while (getline(borrowHistoryCSV, line)) {
+                    vector<string> vectVal;
+                    stringstream ss(line);
+
+                    while (ss.good()) {
+                        string word;
+                        getline(ss, word, ',');
+                        vectVal.push_back(word);
+                    }
+
+                    if (stoi(vectVal[0]) != id) {
+                        vectObj.push_back(line);
+                    }
+                }
+                borrowHistoryCSV.close();
+
+                fstream loanCSV;
+                borrowHistoryCSV.open("borrowHistory.csv", ios::out);
+                for (int i = 0; i < vectObj.size(); i++) {
+                    if (loanCSV.is_open()) {
+                        loanCSV << vectObj[i] << "\n";
+                    }
+                }
+                borrowHistoryCSV.close();
+            }
+        }
+};
+class ReturnHistory : private Loan {
+    private:
+        int returnQty;
+        string returnDate; // Using local_date then tranform into a string is in developing   
+        BorrowHistory borrowHistory;
+
+    public:
+        //Getter & Setter (returnQty)
+        int getReturnQty() {
+            return this->returnQty;
+        }
+        void setReturnQty(int returnQty) {
+            this->returnQty = returnQty;
+        }
+        //Getter & Setter (returnDate)
+        string getReturnDate() {
+            return this->returnDate;
+        }
+        string setReturnDate(string returnDate) {
+            this->returnDate = returnDate;
+        }
+
+        //ReturnHistory Constructor
+        ReturnHistory() {};
+        ReturnHistory(int id, int patronId, int bookId, int returnQty, string returnDate) {
+            this->id = id;
+            this->patronId = patronId;
+            this->bookId = bookId;
+            this->returnQty = returnQty;
+            this->returnDate = returnDate;
+        };
+
+        /*C.R.U.D - borrowHistory.CSV*/
+        // Check LoanId If Existed
+        bool checkIdExisted(int id) {
+            fstream returnHistoryCSV;
+            returnHistoryCSV.open("returnHistory.csv", ios::in);
+
+            if (returnHistoryCSV.is_open()) {
+                string line;
+                while (getline(returnHistoryCSV, line)) {
+                    vector<string> vectVal;
+                    stringstream ss(line);
+
+                    while (ss.good()) {
+                        string word;
+                        getline(ss, word, ',');
+                        vectVal.push_back(word);
+                    }
+
+                    if (stoi(vectVal[0]) == id) {
+                        return true;
+                    }
+                }
+                returnHistoryCSV.close();
+                return false;
+            }
+        }
+
+        // Insert Loan Into CSV
+        void insertIntoCSV()
+        {
+            fstream borrowHistoryCSV;
+            borrowHistoryCSV.open("borrowHistory.csv", ios::app);
+
+            if (borrowHistoryCSV.is_open()) {
+                borrowHistoryCSV << this->id << ',';
+                borrowHistoryCSV << this->patronId << ',';
+                borrowHistoryCSV << this->bookId << ',';
+                borrowHistoryCSV << this->returnQty << ',';
+                borrowHistoryCSV << this->returnDate << endl;
+                borrowHistoryCSV.close();
+            }
+        }
+
+        // Update Loan From CSV
+        void updateInCSV(int id, ReturnHistory returnHistory) {
+            fstream returnHistoryCSV;
+            returnHistoryCSV.open("returnHistory.csv", ios::in);
+
+            if (returnHistoryCSV.is_open()) {
+                vector<string> vectObj;
+                string line;
+                while (getline(returnHistoryCSV, line)) {
+                    vector<string> vectVal;
+                    stringstream ss(line);
+
+                    while (ss.good()) {
+                        string word;
+                        getline(ss, word, ',');
+                        vectVal.push_back(word);
+                    }
+
+                    if (stoi(vectVal[0]) == id) {
+                        vectVal[0] = to_string(returnHistory.getId());
+                        vectVal[1] = returnHistory.getPatronId();
+                        vectVal[2] = returnHistory.getBookId();
+                        vectVal[3] = returnHistory.getReturnQty();
+                        vectVal[4] = returnHistory.getReturnDate();
+                        string altLine;
+                        altLine = vectVal[0] + ','
+                                + vectVal[1] + ','
+                                + vectVal[2] + ','
+                                + vectVal[3] + ','
+                                + vectVal[4] + ','
+                                + vectVal[5];
+                        vectObj.push_back(altLine);
+                    }
+                    else {
+                        vectObj.push_back(line);
+                    }
+                }
+                returnHistoryCSV.close();
+
+                fstream returnHistoryCSV;
+                returnHistoryCSV.open("returnHistory.csv", ios::out);
+                for (int i = 0; i < vectObj.size(); i++) {
+
+                    if (returnHistoryCSV.is_open()) {
+                        returnHistoryCSV << vectObj[i] << "\n";
+                    }
+                }
+                returnHistoryCSV.close();
+            }
+        }
+
+        // Get Author From CSV
+        void getFromCSV() {
+            fstream returnHistoryCSV;
+            returnHistoryCSV.open("returnHistory.csv", ios::in);
+
+            if (returnHistoryCSV.is_open()) {
+                string line;
+                while (getline(returnHistoryCSV, line)) {
+                    vector<string> vectVal;
+                    stringstream ss(line);
+
+                    while (ss.good()) {
+                        string word;
+                        getline(ss, word, ',');
+                        vectVal.push_back(word);
+                    }
+                    cout << "----------------------------------\n";
+                    borrowHistory.getFromCSV(stoi(vectVal[0]));
+                    cout << "| ReturnQty  :  " << vectVal[3] << " (CurrentQty)\n";
+                    cout << "| ReturnDate :  " << vectVal[4] << "\n";
+                    cout << "----------------------------------\n";
+                }
+                returnHistoryCSV.close();
+            }
+        }
+        void getFromCSV(int id) {
+            fstream borrowHistoryCSV;
+            borrowHistoryCSV.open("borrowHistory.csv", ios::in);
+
+            if (borrowHistoryCSV.is_open()) {
+                string line;
+                while (getline(borrowHistoryCSV, line)) {
+                    vector<string> vectVal;
+                    stringstream ss(line);
+
+                    while (ss.good()) {
+                        string word;
+                        getline(ss, word, ',');
+                        vectVal.push_back(word);
+                    }
+
+                    if (stoi(vectVal[0]) == id) {
+                        cout << "----------------------------------\n";
+                        cout << "| BorrowId :  " << vectVal[0] << " (Current Version)\n";
+                        patron.getFromCSV(stoi(vectVal[1]));
+                        book.getFromCSV(stoi(vectVal[2]));
+                        cout << "| BorrowQty:  " << vectVal[3] << " (CurrentQty)\n";
+                        cout << "| BorrowDate  :  " << vectVal[4] << "\n";
+                        cout << "| DueDate     :  " << vectVal[5] << "\n";
+                        cout << "----------------------------------\n";
+                        return;
+                    }
+                }
+                borrowHistoryCSV.close();
+            }
+        }
+
+        // Remove Author From CSV
+        void removeFromCSV(int id) {
+            fstream borrowHistoryCSV;
+            borrowHistoryCSV.open("borrowHistory.csv", ios::in);
+
+            if (borrowHistoryCSV.is_open()) {
+                vector<string> vectObj;
+                string line;
+                while (getline(borrowHistoryCSV, line)) {
+                    vector<string> vectVal;
+                    stringstream ss(line);
+
+                    while (ss.good()) {
+                        string word;
+                        getline(ss, word, ',');
+                        vectVal.push_back(word);
+                    }
+
+                    if (stoi(vectVal[0]) != id) {
+                        vectObj.push_back(line);
+                    }
+                }
+                borrowHistoryCSV.close();
+
+                fstream loanCSV;
+                borrowHistoryCSV.open("borrowHistory.csv", ios::out);
+                for (int i = 0; i < vectObj.size(); i++) {
+                    if (loanCSV.is_open()) {
+                        loanCSV << vectObj[i] << "\n";
+                    }
+                }
+                borrowHistoryCSV.close();
+            }
+        }
+};
+void getAllBorrowUI() {
+    BorrowHistory borrowHistory;
+
+    system("cls");
+    cout << "----------------------------------\n";
+    cout << "|         BORROW HISTORY         |\n";
+    cout << "----------------------------------\n";
+    borrowHistory.getFromCSV();
+    system("pause");
+    loanManagementUI();
+    return;
+};
+void getBorrowByIdUI() {
     int id;
-    string title;
-    string isbn;
-    int quantity;
-    int categoryId;
-    int authorId;
+    BorrowHistory borrowHistory;
+
+    system("cls");
+    cout << "----------------------------------\n";
+    cout << "|   SEARCH BORROW HISTORY BY ID  |\n";
+    cout << "----------------------------------\n";
+    cout << "| BorrowId :  "; cin >> id;
+    cout << "----------------------------------\n";
+    if (!borrowHistory.checkIdExisted(id)) {
+        cout << "Notice[!]: Id Is Not Exsited \n";
+        system("pause");
+        loanManagementUI();
+        return;
+    };
+    borrowHistory.getFromCSV(id);
+    system("pause");
+    loanManagementUI();
+    return;
+};
+void borrowBookUI() {
+    int id;
+    int patronId;
+    int bookId;
+    int borrowQty;
+    string borrowDate; // Using local_date then tranform into a string is in developing 
+    string dueDate;
+    BorrowHistory borrowHistory;
+    Patron patron;
     Book book;
 
     system("cls");
     cout << "----------------------------------\n";
-    cout << "|        CREATE BOOK FORM        |\n";
+    cout << "|        BORROW BOOK FORM        |\n";
     cout << "----------------------------------\n";
-    cout << "| BookId     :  "; cin >> id;
-    if (book.checkIdExisted(id)) {
+    cout << "| BorrowId   :  "; cin >> id;
+    if (borrowHistory.checkIdExisted(id)) {
         cout << "----------------------------------\n";
-        book.getFromCSV(id);
+        borrowHistory.getFromCSV(id);
         cout << "Notice[!]: Id Is Already Exsited \n";
         system("pause");
-        bookManagementUI();
+        loanManagementUI();
         return;
     };
-    cout << "| Title      :  "; getline(cin >> ws, title);
-    cout << "| ISBN       :  "; getline(cin >> ws, isbn);
-    cout << "| Quantity   :  "; cin >> quantity;
-    cout << "| CategoryId :  "; cin >> categoryId;
-    cout << "| Category   :  " << book.getCategoryById(categoryId) << endl;
-    cout << "| AuthorId   :  "; cin >> authorId;
-    cout << "| Category   :  " << book.getAuthorById(authorId) << endl;
+    cout << "| PatronId :  "; cin >> patronId;
+    patron.getFromCSV(patronId);
+    cout << "| BookId   :  "; cin >> bookId;
+    book.getFromCSV(bookId);
+    cout << "| BorrowQty:  "; cin >> borrowQty;
+    cout << "| BorrowDt :  "; getline(cin >> ws, borrowDate);
+    cout << "| DueDate  :  "; getline(cin >> ws, dueDate);
     cout << "----------------------------------\n";
     cout << "----------------------------------\n";
     cout << "|       CONFIRM TO CREATE ?      |\n";
@@ -1550,119 +2501,67 @@ void createBookUI() {
     while (option != 'Y' && option != 'N') {
         cout << "Enter (Y/N): "; cin >> option;
         if (toupper(option) == 'Y') {
-            Book newBook(id, title, isbn, quantity, categoryId, authorId);
-            newBook.insertIntoCSV();
-            cout << "Notice[!]: Book Created \n";
+            BorrowHistory borrowHistory(id, patronId, bookId, borrowQty, borrowDate, dueDate);
+            borrowHistory.insertIntoCSV();
+            cout << "Notice[!]: Book Borrowed \n";
             system("pause");
-            bookManagementUI();
+            loanManagementUI();
         }
         else if (toupper(option) == 'N') {
-            bookManagementUI();
+            loanManagementUI();
         }
     }
 }
-void getAllBookUI() {
-    Book book;
+void getAllReturnUI() {
+    ReturnHistory returnHistory;
 
     system("cls");
     cout << "----------------------------------\n";
-    cout << "|       BOOK MANAGEMENT MENU     |\n";
+    cout << "|         RETURN HISTORY         |\n";
     cout << "----------------------------------\n";
-    book.getFromCSV();
+    returnHistory.getFromCSV();
     system("pause");
-    bookManagementUI();
+    loanManagementUI();
     return;
 };
-void getBookByIdUI() {
+void getReturnByIdUI() {
     int id;
-    Book book;
+    ReturnHistory returnHistory;
 
     system("cls");
     cout << "----------------------------------\n";
-    cout << "|       BOOK MANAGEMENT MENU     |\n";
+    cout << "|         RETURN HISTORY         |\n";
     cout << "----------------------------------\n";
-    cout << "| BookId   :  "; cin >> id;
+    cout << "| ReturnId:  "; cin >> id;
     cout << "----------------------------------\n";
-    if (!book.checkIdExisted(id)) {
+    if (!returnHistory.checkIdExisted(id)) {
         cout << "Notice[!]: Id Is Not Exsited \n";
         system("pause");
-        bookManagementUI();
+        loanManagementUI();
         return;
     };
-    book.getFromCSV(id);
+    returnHistory.getFromCSV(id);
     system("pause");
-    bookManagementUI();
+    loanManagementUI();
     return;
 };
-void updateBookUI() {
+void returnBookUI() {
     int id;
-    string title;
-    string isbn;
-    int quantity;
-    int categoryId;
-    int authorId;
-    Book book;
+    ReturnHistory returnHistory;
 
     system("cls");
     cout << "----------------------------------\n";
-    cout << "|        UPDATE BOOK FORM        |\n";
+    cout << "|        RETURN LOAN FORM        |\n";
     cout << "----------------------------------\n";
-    cout << "| BookId     :  "; cin >> id;
+    cout << "| ReturnId:  "; cin >> id;
     cout << "----------------------------------\n";
-    if (!book.checkIdExisted(id)) {
+    if (!returnHistory.checkIdExisted(id)) {
         cout << "Notice[!]: Id Is Not Exsited \n";
         system("pause");
-        bookManagementUI();
+        loanManagementUI();
         return;
     };
-    book.getFromCSV(id);
-    cout << "----------------------------------\n";
-    cout << "| BookId     : " << id << " (Update Version)\n";
-    cout << "| Title      : "; getline(cin >> ws, title);
-    cout << "| ISBN       : "; getline(cin >> ws, isbn);
-    cout << "| Quantity   : "; cin >> quantity;
-    cout << "| CategoryId :  "; cin >> categoryId;
-    cout << "| Category   :  " << book.getCategoryById(categoryId) << endl;
-    cout << "| AuthorId   :  "; cin >> authorId;
-    cout << "| Category   :  " << book.getAuthorById(authorId) << endl;
-    cout << "----------------------------------\n";
-    cout << "----------------------------------\n";
-    cout << "|     YOU WANT TO REPLACED ?     |\n";
-    cout << "----------------------------------\n";
-    cout << "|      YES      |     Cancel     |\n";
-    cout << "----------------------------------\n";
-    char option = ' ';
-    while (option != 'Y' && option != 'N') {
-        cout << "Enter (Y/N): "; cin >> option;
-        if (toupper(option) == 'Y') {
-            Book altBook(id, title, isbn, quantity, categoryId, authorId);
-            altBook.updateInCSV(id, altBook);
-            cout << "Notice[!]: Book Updated \n";
-            system("pause");
-            bookManagementUI();
-        }
-        else if (toupper(option) == 'N') {
-            bookManagementUI();
-        }
-    }
-}
-void deleteBookUI() {
-    int id;
-    Book book;
-
-    system("cls");
-    cout << "----------------------------------\n";
-    cout << "|        DELETE BOOK FORM        |\n";
-    cout << "----------------------------------\n";
-    cout << "| BookId   :  "; cin >> id;
-    cout << "----------------------------------\n";
-    if (!book.checkIdExisted(id)) {
-        cout << "Notice[!]: Id Is Not Exsited \n";
-        system("pause");
-        bookManagementUI();
-        return;
-    };
-    book.getFromCSV(id);
+    returnHistory.getFromCSV(id);
     cout << "----------------------------------\n";
     cout << "|       YOU WANT TO DELETE?      |\n";
     cout << "----------------------------------\n";
@@ -1672,43 +2571,46 @@ void deleteBookUI() {
     while (option != 'Y' && option != 'N') {
         cout << "Enter (Y/N): "; cin >> option;
         if (toupper(option) == 'Y') {
-            book.removeFromCSV(id);
-            cout << "Notice[!]: Book Deleted \n";
+            returnHistory.removeFromCSV(id);
+            cout << "Notice[!]: Book Returned \n";
             system("pause");
-            bookManagementUI();
+            loanManagementUI();
         }
         else if (toupper(option) == 'N') {
-            bookManagementUI();
+            loanManagementUI();
         }
     }
 }
-void bookManagementUI() {
+// in developing
+void updateBorrowUI() {}
+void deleteBorrowUI() {} //i think we don't need 
+void updateReturnUI() {}
+void deleteReturnUI() {} //i think we don't need
+void loanManagementUI() {
     int option;
 
     system("cls");
     cout << "----------------------------------\n";
-    cout << "|       BOOK MANAGEMENT MENU     |\n";
+    cout << "|      LOAN MANAGEMENT MENU      |\n";
     cout << "----------------------------------\n";
-    cout << "| 1> Get all books               |\n";
-    cout << "| 2> Get book by ID              |\n";
-    cout << "| 3> Get book by Category        |\n";
-    cout << "| 4> Get book by Author          |\n";
-    cout << "| 5> Create book                 |\n";
-    cout << "| 6> Modify book by ID           |\n";
-    cout << "| 7> Delete book by ID           |\n";
-    cout << "| 8> Back to Main Menu           |\n";
+    cout << "| 1> Get all \"borrows\"           |\n";
+    cout << "| 2> Get all \"returns\"           |\n";
+    cout << "| 3> Borrow book                 |\n";
+    cout << "| 4> Return book                 |\n";
+    cout << "| 5> Modify a \"borrow\" (!DO NOT) |\n"; // in developing
+    cout << "| 6> Modify a \"return\" (!DO NOT) |\n"; // in developing
+    cout << "| 7> Back to Main Menu           |\n";
     cout << "----------------------------------\n";
     cout << "Please choose an option: "; cin >> option;
     switch (option) {
-    case 1: getAllBookUI(); break;
-    case 2: getBookByIdUI(); break;
-    case 3: cout << "c3\n"; break;
-    case 4: cout << "c4\n"; break;
-    case 5: createBookUI(); break;
-    case 6: updateBookUI(); break;
-    case 7: deleteBookUI(); break;
-    case 8: system("cls"); mainMenuUI(); break;
-    default: { cout << "Invalid input\n"; system("pause"); system("cls"); bookManagementUI(); };
+    case 1: getAllBorrowUI(); break;
+    case 2: getAllReturnUI(); break;
+    case 3: borrowBookUI(); break;
+    case 4: returnBookUI(); break;
+    case 5: cout << "This Function is in Developing!\n"; system("pause"); loanManagementUI(); break;
+    case 6: cout << "This Function is in Developing!\n"; system("pause"); loanManagementUI(); break;
+    case 7: system("cls"); mainMenuUI(); break;
+    default: { cout << "Invalid input\n"; system("pause"); system("cls"); loanManagementUI(); };
     }
 }
 
@@ -1730,8 +2632,8 @@ void mainMenuUI() {
     case 1: bookManagementUI(); break;
     case 2: categoryManagementUI(); break;
     case 3: authorManagementUI(); break;
-    case 4: cout << "patronManagmentUI()"; break;
-    case 5: cout << "loanManagmentUI()"; break;
+    case 4: patronManagementUI(); break;
+    case 5: loanManagementUI(); break;
     case 6: logoutUI(); break;
     default: { cout << "Invalid input\n"; system("pause"); system("cls"); mainMenuUI(); };
     }
@@ -1781,9 +2683,9 @@ int main()
 {
     //username = "phunghoangvnuit";
     //password = "hello_world_123";
-    
+    //loginUI(); 
     mainMenuUI();
-    
+
     return 0;
 }
 
