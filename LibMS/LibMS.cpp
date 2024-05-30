@@ -1,7 +1,7 @@
-/*Team Leader: Phung Hoang          */
-/*Team Member 1:                    */
-/*Team Member 2:                    */     
-/*Contact: phunghoangvnuit@gmail.com*/
+/*Team Leader: Phung Hoang (20070832)   */
+/*Team Member 1: Uong Thi Nga (21070270)*/
+/*Team Member 2: Bui Linh Dan (20070815)*/     
+/*Contact: phunghoangvnuit@gmail.com    */
 
 /*NOTE_1: 100% "NO" ChatGPT / "NO" TEMPLATE SOURCE CODE*/
 // I can prove by giving answer for all questions related to this project in presentation day!
@@ -339,11 +339,11 @@ public:
                     vectVal[5] = to_string(book.getAuthorId());
                     string altLine;
                     altLine = vectVal[0] + ','
-                        + vectVal[1] + ','
-                        + vectVal[2] + ','
-                        + vectVal[3] + ','
-                        + vectVal[4] + ','
-                        + vectVal[5];
+                            + vectVal[1] + ','
+                            + vectVal[2] + ','
+                            + vectVal[3] + ','
+                            + vectVal[4] + ','
+                            + vectVal[5];
                     vectObj.push_back(altLine);
                 }
                 else {
