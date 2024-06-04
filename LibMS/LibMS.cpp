@@ -733,14 +733,14 @@ void createBookUI() {
     char option = ' ';
     while (option != 'Y' && option != 'N') {
         cout << "Enter (Y/N): "; cin >> option;
-        if (toupper(option) == 'Y') {
+        if (option == 'Y' || option == 'y') {
             Book newBook(id, title, isbn, quantity, categoryId, authorId);
             newBook.insertIntoCSV();
             cout << "Notice[!]: Book Created \n";
             system("pause");
             bookManagementUI();
         }
-        else if (toupper(option) == 'N') {
+        else if (option == 'N' || option == 'n') {
             bookManagementUI();
         }
     }
@@ -1517,6 +1517,7 @@ public:
     Author(int id, string name, string email) {
         this->id = id;
         this->name = name;
+        this->email = email;
     }
 
     //Association
@@ -1632,7 +1633,8 @@ public:
 
         if (authorCSV.is_open()) {
             authorCSV << this->id << ',';
-            authorCSV << this->name << endl;
+            authorCSV << this->name << ',';
+            authorCSV << this->email << endl;
             authorCSV.close();
         }
     }
@@ -3789,7 +3791,6 @@ int main()
     //username = "phunghoangvnuit";
     //password = "hello_world_123";
     //loginUI(); 
-
     mainMenuUI(); 
     
     return 0;

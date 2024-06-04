@@ -1,5 +1,5 @@
 ﻿  LibMS.cpp
-C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(3766,9): warning C4101: 'option': unreferenced local variable
+C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(3768,9): warning C4101: 'option': unreferenced local variable
 C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(287,1): warning C4715: 'Book::checkIdExisted': not all control paths return a value
 C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(312,1): warning C4715: 'Book::checkTitleExisted': not all control paths return a value
 C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(337,1): warning C4715: 'Book::checkIsbnExisted': not all control paths return a value
@@ -9,18 +9,18 @@ C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(120,1): warning C4715: 'Book::c
 C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(1063,1): warning C4715: 'Category::checkIdExisted': not all control paths return a value
 C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(1088,1): warning C4715: 'Category::checkTitleExisted': not all control paths return a value
 C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(1035,1): warning C4715: 'Category::checkReference': not all control paths return a value
-C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(1575,1): warning C4715: 'Author::checkIdExisted': not all control paths return a value
-C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(1600,1): warning C4715: 'Author::checkNameExisted': not all control paths return a value
-C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(1625,1): warning C4715: 'Author::checkEmailExisted': not all control paths return a value
-C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(1547,1): warning C4715: 'Author::checkReference': not all control paths return a value
-C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(2160,1): warning C4715: 'Patron::checkIdExisted': not all control paths return a value
-C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(2185,1): warning C4715: 'Patron::checkNameExisted': not all control paths return a value
-C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(2210,1): warning C4715: 'Patron::checkPhoneExisted': not all control paths return a value
-C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(2235,1): warning C4715: 'Patron::checkEmailExisted': not all control paths return a value
-C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(2260,1): warning C4715: 'Patron::checkAddressExisted': not all control paths return a value
-C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(3102,1): warning C4715: 'Loan::checkIdExisted': not all control paths return a value
-C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(3127,1): warning C4715: 'Loan::checkIfReturned': not all control paths return a value
+C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(1576,1): warning C4715: 'Author::checkIdExisted': not all control paths return a value
+C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(1626,1): warning C4715: 'Author::checkEmailExisted': not all control paths return a value
+C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(1601,1): warning C4715: 'Author::checkNameExisted': not all control paths return a value
+C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(1548,1): warning C4715: 'Author::checkReference': not all control paths return a value
+C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(2162,1): warning C4715: 'Patron::checkIdExisted': not all control paths return a value
+C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(2187,1): warning C4715: 'Patron::checkNameExisted': not all control paths return a value
+C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(2212,1): warning C4715: 'Patron::checkPhoneExisted': not all control paths return a value
+C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(2237,1): warning C4715: 'Patron::checkEmailExisted': not all control paths return a value
+C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(2262,1): warning C4715: 'Patron::checkAddressExisted': not all control paths return a value
+C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(3104,1): warning C4715: 'Loan::checkIdExisted': not all control paths return a value
+C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(3129,1): warning C4715: 'Loan::checkIfReturned': not all control paths return a value
 C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(214,1): warning C4715: 'Book::checkBookQuantity': not all control paths return a value
-C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(2991,1): warning C4715: 'Loan::getBookIdFromCSV': not all control paths return a value
-C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(3014,1): warning C4715: 'Loan::getBorrowQtyFromCSV': not all control paths return a value
+C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(2993,1): warning C4715: 'Loan::getBookIdFromCSV': not all control paths return a value
+C:\Users\phung\Desktop\Cpp\LibMS\LibMS\LibMS.cpp(3016,1): warning C4715: 'Loan::getBorrowQtyFromCSV': not all control paths return a value
   LibMS.vcxproj -> C:\Users\phung\Desktop\Cpp\LibMS\x64\Debug\LibMS.exe
