@@ -1,9 +1,9 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\phung\\Desktop\\Cpp\\LibMS\\",
+  "WorkspaceRootPath": "C:\\Users\\phung\\Desktop\\LibMS\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{34EA0BB4-8102-403C-8351-23ABB2DBA60B}|LibMS\\LibMS.vcxproj|C:\\Users\\phung\\Desktop\\Cpp\\LibMS\\LibMS\\LibMS.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{34EA0BB4-8102-403C-8351-23ABB2DBA60B}|LibMS\\LibMS.vcxproj|C:\\Users\\phung\\Desktop\\LibMS\\LibMS\\LibMS.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{34EA0BB4-8102-403C-8351-23ABB2DBA60B}|LibMS\\LibMS.vcxproj|solutionrelative:LibMS\\LibMS.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
@@ -20,11 +20,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "LibMS.cpp",
-              "DocumentMoniker": "C:\\Users\\phung\\Desktop\\Cpp\\LibMS\\LibMS\\LibMS.cpp",
+              "DocumentMoniker": "C:\\Users\\phung\\Desktop\\LibMS\\LibMS\\LibMS.cpp",
               "RelativeDocumentMoniker": "LibMS\\LibMS.cpp",
-              "ToolTip": "C:\\Users\\phung\\Desktop\\Cpp\\LibMS\\LibMS\\LibMS.cpp",
+              "ToolTip": "C:\\Users\\phung\\Desktop\\LibMS\\LibMS\\LibMS.cpp",
               "RelativeToolTip": "LibMS\\LibMS.cpp",
-              "ViewState": "AQIAACIHAAAAAAAAAAAAAFMHAAABAAAA",
+              "ViewState": "AQIAACoAAAAAAAAAAAAAAFMHAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-06-03T10:03:15.812Z",
               "EditorCaption": ""
